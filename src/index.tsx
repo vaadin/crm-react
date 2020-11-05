@@ -9,7 +9,7 @@ import rootSagas from './sagas';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import './index.css';
+import './index.scss';
 
 const theStore = store();
 theStore.runSaga(rootSagas);
