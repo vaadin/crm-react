@@ -1,11 +1,16 @@
 import React from 'react';
 import type { FC } from 'react';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import routes, { renderRoutes } from './routes';
 import './App.scss';
 
+const history = createBrowserHistory();
+
 const App: FC = () => (
-  <div className="App-header">
-    <h1>Vaadin CRM</h1>
-  </div>
+  <Router history={history}>
+    {renderRoutes(routes)}
+  </Router>
 );
 
 export default App;
