@@ -7,7 +7,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     alignItems: 'center',
     backgroundColor: 'white',
@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     justifyContent: 'center',
     minHeight: '100%',
-    padding: '24px',
+    padding: theme.spacing(3),
   },
 }));
 
