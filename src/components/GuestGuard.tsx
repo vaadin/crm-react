@@ -12,14 +12,14 @@ const GuestGuard: FC<GuestGuardProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <Redirect to="/" />;
+    return <Redirect to="/contacts" />;
   }
 
   return <>{children}</>;
 };
 
 GuestGuard.propTypes = {
-  children: PropTypes.node,
+  children: PropTypes.node
 };
 
 export default GuestGuard;

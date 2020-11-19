@@ -1,6 +1,6 @@
 import React, { Suspense, Fragment, lazy } from 'react';
 import type { FC } from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import LoadingScreen from './components/LoadingScreen';
 import AuthGuard from './components/AuthGuard';
 import GuestGuard from './components/GuestGuard';
@@ -49,19 +49,25 @@ const routes: Routes = [
   {
     exact: true,
     path: '/404',
-    component: lazy(() => import('./views/errors/NotFoundView')),
+    component: lazy(() => import('./views/errors/NotFoundView'))
   },
   {
     exact: true,
     guard: GuestGuard,
     path: '/login',
-    component: lazy(() => import('./views/login')),
+    component: lazy(() => import('./views/login'))
+  },
+  {
+    exact: true,
+    path: '/contacts',
+    guard: AuthGuard,
+    component: lazy(() => import('./views/users'))
   },
   {
     path: '/',
     guard: AuthGuard,
-    component: lazy(() => import('./views/users')),
-  },
+    component: lazy(() => import('./views/errors/NotFoundView'))
+  }
 ];
 
 export default routes;
