@@ -15,8 +15,8 @@ export default function store(initialState: AppState = init) {
     ...createStore(
       rootReducer,
       initialState,
-      composeWithDevTools(applyMiddleware(...middleware)),
+      composeWithDevTools(applyMiddleware(...middleware))
     ),
-    runSaga: sagaMiddleware.run,
+    runSaga: sagaMiddleware.run
   };
 }

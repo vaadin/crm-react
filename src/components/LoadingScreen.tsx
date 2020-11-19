@@ -4,7 +4,7 @@ import NProgress from 'nprogress';
 import {
   Box,
   LinearProgress,
-  makeStyles,
+  makeStyles
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,8 +16,8 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     justifyContent: 'center',
     minHeight: '100%',
-    padding: theme.spacing(3),
-  },
+    padding: theme.spacing(3)
+  }
 }));
 
 const LoadingScreen: FC = () => {

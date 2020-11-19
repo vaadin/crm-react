@@ -4,34 +4,44 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Button,
+  Button
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
+import useAuth from '../../hooks/useAuth';
 
 import './login.scss';
 
 const initialLoginData = Object.freeze({
   name: '',
-  password: '',
+  password: ''
 });
 
 const Login: FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState(initialLoginData);
-  const hasError = false;
+  const [hasError, setHasError] = useState(false);
+  const { login } = useAuth() as any;
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   const handleChange = (e: any) => {
     setLoginData({
       ...loginData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
+    try {
+      await login(loginData.name, loginData.password);
+    } catch (e) {
+      console.log(e);
+      setHasError(true);
+    }
   };
 
   return (
@@ -80,7 +90,7 @@ const Login: FC = () => {
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
-              ),
+              )
             }}
           />
           <Button variant="contained" color="primary" fullWidth type="submit">
