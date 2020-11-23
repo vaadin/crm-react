@@ -10,7 +10,9 @@ const history = createBrowserHistory();
 
 const App: FC = () => (
   <Router history={history}>
-    <AuthProvider>{renderRoutes(routes)}</AuthProvider>
+    <AuthProvider>
+      {renderRoutes(routes)}
+    </AuthProvider>
   </Router>
 );
 

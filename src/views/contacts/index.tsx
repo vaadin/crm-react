@@ -1,8 +1,8 @@
 import React from 'react';
 import type { FC } from 'react';
 
-const Users: FC = () => {
+const Contacts: FC = () => {
   return <div className="App-header">Contacts</div>;
 };
 
-export default Users;
+export default Contacts;
