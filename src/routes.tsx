@@ -18,11 +18,6 @@ type Routes = {
 const routes: Routes = [
   {
     exact: true,
-    path: '/404',
-    component: lazy(() => import('./views/errors/NotFoundView'))
-  },
-  {
-    exact: true,
     guard: GuestGuard,
     path: '/login',
     component: lazy(() => import('./views/login'))

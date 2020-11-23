@@ -10,12 +10,13 @@ interface GuestGuardProps {
 
 const GuestGuard: FC<GuestGuardProps> = ({ children }) => {
   const { isAuthenticated } = useAuth();
+  const lastVisitUrl = localStorage.getItem('last_visit_url') || '/contacts';
 
-  if (isAuthenticated) {
-    return <Redirect to="/contacts" />;
+  if (!isAuthenticated) {
+    return <>{children}</>;
   }
 
-  return <>{children}</>;
+  return <Redirect to={lastVisitUrl} />;
 };
 
 GuestGuard.propTypes = {

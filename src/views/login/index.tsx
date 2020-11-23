@@ -21,11 +21,11 @@ const Login: FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState(initialLoginData);
   const [hasError, setHasError] = useState(false);
-  const { login } = useAuth() as any;
+  const { login } = useAuth();
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
       ...loginData,
       [e.target.name]: e.target.value

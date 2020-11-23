@@ -1,15 +1,16 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import type { FC, ReactNode } from 'react';
+import SplashScreen from '../components/SplashScreen';
 import axios from '../utils';
 
 interface AuthState {
+  isInitialised: boolean;
   isAuthenticated: boolean;
 }
 
 interface AuthContextValue extends AuthState {
   login: (name: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (name: string, password: string) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -31,13 +32,10 @@ type LogoutAction = {
   type: 'LOGOUT';
 };
 
-type RegisterAction = {
-  type: 'REGISTER';
-};
-
-type Action = InitialiseAction | LoginAction | LogoutAction | RegisterAction;
+type Action = InitialiseAction | LoginAction | LogoutAction;
 
 const initialAuthState: AuthState = {
+  isInitialised: false,
   isAuthenticated: false
 };
 
@@ -58,11 +56,11 @@ const reducer = (state: AuthState, action: Action): AuthState => {
 
       return {
         ...state,
+        isInitialised: true,
         isAuthenticated
       };
     }
-    case 'LOGIN':
-    case 'REGISTER': {
+    case 'LOGIN': {
       return {
         ...state,
         isAuthenticated: true
@@ -83,8 +81,7 @@ const reducer = (state: AuthState, action: Action): AuthState => {
 const AuthContext = createContext<AuthContextValue>({
   ...initialAuthState,
   login: () => Promise.resolve(),
-  logout: () => {},
-  register: () => Promise.resolve()
+  logout: () => {}
 });
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children = null }) => {
@@ -110,24 +107,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children = null }) => {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const register = async (name: string, password: string) => {
-    const response = await axios.post<{ accessToken: string }>('/signup', {
-      name,
-      password
-    });
-
-    window.localStorage.setItem('accessToken', response.headers.authorization);
-
-    dispatch({
-      type: 'REGISTER'
-    });
-  };
-
   useEffect(() => {
     const initialise = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
-        console.log(accessToken);
 
         if (accessToken) {
           setSession(accessToken);
@@ -160,13 +143,16 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children = null }) => {
     initialise();
   }, []);
 
+  if (!state.isInitialised) {
+    return <SplashScreen />;
+  }
+
   return (
     <AuthContext.Provider
       value={{
         ...state,
         login,
-        logout,
-        register
+        logout
       }}
     >
       {children}

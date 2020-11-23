@@ -35,10 +35,10 @@ interface TopBarProps {
   onMobileNavOpen?: () => void;
 }
 
-const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
+const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen }) => {
   const classes = useStyles();
   const history = useHistory();
-  const { logout } = useAuth() as any;
+  const { logout } = useAuth();
   const [open, setOpen] = React.useState(false);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
