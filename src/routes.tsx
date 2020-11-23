@@ -1,6 +1,7 @@
 import React, { Suspense, Fragment, lazy } from 'react';
 import type { FC } from 'react';
 import { Switch, Route } from 'react-router-dom';
+import AdminLayout from './layouts/AdminLayout';
 import LoadingScreen from './components/LoadingScreen';
 import AuthGuard from './components/AuthGuard';
 import GuestGuard from './components/GuestGuard';
@@ -14,10 +15,48 @@ type Routes = {
   routes?: Routes;
 }[];
 
-export const renderRoutes = (routes: Routes = []): JSX.Element => (
+const routes: Routes = [
+  {
+    exact: true,
+    path: '/404',
+    component: lazy(() => import('./views/errors/NotFoundView'))
+  },
+  {
+    exact: true,
+    guard: GuestGuard,
+    path: '/login',
+    component: lazy(() => import('./views/login'))
+  },
+  {
+    exact: true,
+    guard: AuthGuard,
+    layout: AdminLayout,
+    path: '/contacts',
+    component: lazy(() => import('./views/contacts'))
+  },
+  {
+    exact: true,
+    guard: AuthGuard,
+    layout: AdminLayout,
+    path: '/dashboard',
+    component: lazy(() => import('./views/dashboard'))
+  },
+  {
+    exact: true,
+    path: '/',
+    guard: AuthGuard,
+    component: lazy(() => import('./views/errors/NotFoundView'))
+  },
+  {
+    path: '*',
+    component: lazy(() => import('./views/errors/NotFoundView'))
+  }
+];
+
+export const renderRoutes = (routes_: Routes = []): JSX.Element => (
   <Suspense fallback={<LoadingScreen />}>
     <Switch>
-      {routes.map((route, i) => {
+      {routes_.map((route, i) => {
         const Guard = route.guard || Fragment;
         const Layout = route.layout || Fragment;
         const Component = route.component as React.ElementType;
@@ -44,30 +83,5 @@ export const renderRoutes = (routes: Routes = []): JSX.Element => (
     </Switch>
   </Suspense>
 );
-
-const routes: Routes = [
-  {
-    exact: true,
-    path: '/404',
-    component: lazy(() => import('./views/errors/NotFoundView'))
-  },
-  {
-    exact: true,
-    guard: GuestGuard,
-    path: '/login',
-    component: lazy(() => import('./views/login'))
-  },
-  {
-    exact: true,
-    path: '/contacts',
-    guard: AuthGuard,
-    component: lazy(() => import('./views/users'))
-  },
-  {
-    path: '/',
-    guard: AuthGuard,
-    component: lazy(() => import('./views/errors/NotFoundView'))
-  }
-];
 
 export default routes;
