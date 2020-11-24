@@ -1,9 +1,8 @@
 import { combineReducers } from 'redux';
+import { reducer as contactReducer } from './contacts';
 
-const appReducer = combineReducers({});
-
-const rootReducer = (state: any, action: any) => {
-  return appReducer(state, action);
-};
+const rootReducer = combineReducers({
+  contacts: contactReducer
+});
 
 export default rootReducer;

@@ -1,22 +1,25 @@
-import { applyMiddleware, createStore } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import createSagaMiddleware from 'redux-saga';
-import { AppState } from './types';
+import {
+  useDispatch as useReduxDispatch,
+  useSelector as useReduxSelector
+} from 'react-redux';
+import type { ThunkAction } from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
+import type { Action } from '@reduxjs/toolkit';
 import rootReducer from '../reducers';
 
-// initialValues
-const init: AppState = {};
+const store = configureStore({
+  reducer: rootReducer,
+  devTools: true
+});
 
-export default function store(initialState: AppState = init) {
-  const sagaMiddleware = createSagaMiddleware();
-  const middleware = [sagaMiddleware];
+export type RootState = ReturnType<typeof store.getState>;
 
-  return {
-    ...createStore(
-      rootReducer,
-      initialState,
-      composeWithDevTools(applyMiddleware(...middleware))
-    ),
-    runSaga: sagaMiddleware.run
-  };
-}
+export type AppDispatch = typeof store.dispatch;
+
+export type AppThunk = ThunkAction<void, RootState, null, Action<string>>;
+
+export const useSelector = useReduxSelector;
+
+export const useDispatch: any = () => useReduxDispatch<AppDispatch>();
+
+export default store;

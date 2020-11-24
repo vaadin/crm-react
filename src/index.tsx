@@ -5,17 +5,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import store from './store';
-import rootSagas from './sagas';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import './index.scss';
 
-const theStore = store();
-theStore.runSaga(rootSagas);
-
 ReactDOM.render(
-  <Provider store={theStore}>
+  <Provider store={store}>
     <React.StrictMode>
       <App />
     </React.StrictMode>
