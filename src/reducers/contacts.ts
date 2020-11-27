@@ -23,9 +23,10 @@ const slice = createSlice({
 
 export const { reducer } = slice;
 
-export const getContacts = (): AppThunk => async (dispatch) => {
+export const getContacts = (filter?: string): AppThunk => async (dispatch) => {
+  const filterUrl = filter ? `?search=${filter}` : '';
   const response = await axios.get<[]>(
-    `${process.env.REACT_APP_BASE_API}/contacts`
+    `${process.env.REACT_APP_BASE_API}/contacts${filterUrl}`
   );
   dispatch(slice.actions.getContacts(response.data));
 };

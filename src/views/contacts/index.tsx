@@ -59,15 +59,19 @@ const Contacts: FC = () => {
     setCurrent(contact);
   };
 
+  const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(getContacts(e.target.value));
+  };
+
   const handleAddClick = () => {
     const emptyContact: Contact = {
-      id: NaN,
+      id: 0,
       firstName: '',
       lastName: '',
       email: '',
       status: '',
       company: {
-        id: NaN,
+        id: '',
         name: '',
         persisted: false
       }
@@ -77,6 +81,10 @@ const Contacts: FC = () => {
 
   const handleCancel = () => {
     setCurrent(undefined);
+  };
+
+  const handleUpdateTable = () => {
+    dispatch(getContacts());
   };
 
   return (
@@ -89,6 +97,7 @@ const Contacts: FC = () => {
             variant="outlined"
             size="small"
             type="search"
+            onChange={handleFilter}
           />
           <Button className={classes.addButton} onClick={handleAddClick}>
             Add contact
@@ -142,6 +151,7 @@ const Contacts: FC = () => {
             contact={current}
             companies={companies.data}
             handleCancel={handleCancel}
+            updateTable={handleUpdateTable}
           />
         )}
       </Grid>

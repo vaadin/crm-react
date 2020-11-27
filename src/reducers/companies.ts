@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from '../utils';
 import type { AppThunk } from '../store';
-import type { Companies } from '../types/companies';
+import type { Company } from '../types/companies';
 
 export interface CompaniesState {
-  data: Companies;
+  data: Company[];
 }
 
 const initialState: CompaniesState = {
-  data: {}
+  data: []
 };
 
 const slice = createSlice({
   name: 'companies',
   initialState,
   reducers: {
-    getCompanies(state: CompaniesState, action: PayloadAction<Companies>) {
+    getCompanies(state: CompaniesState, action: PayloadAction<Company[]>) {
       state.data = action.payload;
     }
   }
@@ -24,7 +24,7 @@ const slice = createSlice({
 export const { reducer } = slice;
 
 export const getCompanies = (): AppThunk => async (dispatch) => {
-  const response = await axios.get<Companies>(
+  const response = await axios.get<Company[]>(
     `${process.env.REACT_APP_BASE_API}/companies`
   );
   dispatch(slice.actions.getCompanies(response.data));

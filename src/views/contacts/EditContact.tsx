@@ -10,7 +10,8 @@ import {
   Theme
 } from '@material-ui/core';
 import type { Contact } from '../../types/contact';
-import type { Companies } from '../../types/companies';
+import type { Company } from '../../types/companies';
+import axios from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -30,20 +31,23 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface EditContactProps {
   contact?: Contact;
-  companies?: Companies;
+  companies?: Company[];
   handleCancel: () => void;
+  updateTable: () => void;
 }
 
 const EditContact: FC<EditContactProps> = ({
   contact,
   companies,
-  handleCancel
+  handleCancel,
+  updateTable
 }) => {
   const classes = useStyles();
   const [contactData, setContactData] = useState<any>(contact);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setContactData({ ...contact, company: contact?.company.name });
+    setContactData({ ...contact, company: contact?.company.id });
   }, [contact]);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
@@ -53,15 +57,46 @@ const EditContact: FC<EditContactProps> = ({
     });
   };
 
-  const handleDelete = () => {
-    console.log('delete clicked');
+  const handleDelete = async () => {
+    setLoading(true);
+    await axios
+      .delete(`${process.env.REACT_APP_BASE_API}/contact/${contactData.id}`)
+      .then(() => {
+        setLoading(false);
+        updateTable();
+      });
   };
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    console.log('form data>>>', contactData);
+    const data = {
+      ...contactData,
+      company: {
+        id: contactData.company
+      }
+    };
+
+    setLoading(true);
+    if (contactData.id > 0) {
+      await axios
+        .put(
+          `${process.env.REACT_APP_BASE_API}/contact/${contactData.id}`,
+          data
+        )
+        .then(() => {
+          setLoading(false);
+          updateTable();
+        });
+    } else {
+      await axios
+        .post(`${process.env.REACT_APP_BASE_API}/contact`, data)
+        .then(() => {
+          setLoading(false);
+          updateTable();
+        });
+    }
   };
 
   return (
@@ -87,6 +122,7 @@ const EditContact: FC<EditContactProps> = ({
       <TextField
         name="email"
         label="Email"
+        type="email"
         value={contactData.email}
         onChange={handleChange}
         variant="outlined"
@@ -126,20 +162,30 @@ const EditContact: FC<EditContactProps> = ({
           }}
         >
           <option value="" className={classes.hidden} />
-          {Object.keys(companies as any).map((company) => {
+          {companies?.map((company) => {
             return (
-              <option key={company} value={company}>
-                {company}
+              <option key={company.id} value={company.id}>
+                {company.name}
               </option>
             );
           })}
         </Select>
       </FormControl>
       <FormControl className={classes.control}>
-        <Button variant="contained" color="primary" type="submit">
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          disabled={isLoading}
+        >
           Save
         </Button>
-        <Button variant="contained" color="secondary" onClick={handleDelete}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleDelete}
+          disabled={!contactData.id}
+        >
           Delete
         </Button>
         <Button variant="contained" onClick={handleCancel}>

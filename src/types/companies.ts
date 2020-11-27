@@ -3,7 +3,7 @@ export interface Companies {
 }
 
 export interface Company {
-  id: number;
+  id: string;
   name: string;
   persisted: boolean;
 }
