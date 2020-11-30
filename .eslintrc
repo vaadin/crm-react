@@ -34,6 +34,7 @@
   "rules": {
     "@typescript-eslint/comma-dangle": ["error", "never"],
     "@typescript-eslint/no-explicit-any": "off",
+    "no-param-reassign": ["error", { "props": false }],
     "import/no-unresolved": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
@@ -46,6 +47,8 @@
     "react/jsx-filename-extension": "off",
     "react/jsx-props-no-spreading": "off",
     "react/require-default-props": "off",
-    "react/no-array-index-key": "off"
+    "react/no-array-index-key": "off",
+    "react/prop-types": "off",
+    "react/jsx-one-expression-per-line": "off"
   }
 }

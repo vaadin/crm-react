@@ -42,7 +42,7 @@ const initialAuthState: AuthState = {
 const setSession = (accessToken: string | null): void => {
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken);
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+    axios.defaults.headers.common.Authorization = `${accessToken}`;
   } else {
     localStorage.removeItem('accessToken');
     delete axios.defaults.headers.common.Authorization;
