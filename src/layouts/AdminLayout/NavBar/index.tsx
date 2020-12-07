@@ -78,7 +78,7 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
 
   return (
     <>
-      <Hidden lgUp>
+      <Hidden mdUp>
         <Drawer
           anchor="left"
           classes={{ paper: classes.mobileDrawer }}
@@ -89,7 +89,7 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
           <div>{content}</div>
         </Drawer>
       </Hidden>
-      <Hidden mdDown>
+      <Hidden smDown>
         <Drawer
           anchor="left"
           classes={{ paper: classes.desktopDrawer }}

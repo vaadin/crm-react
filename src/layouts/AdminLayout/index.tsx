@@ -21,13 +21,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: '1 1 auto',
     overflow: 'hidden',
     paddingTop: 64,
-    marginLeft: 0,
-    [theme.breakpoints.up('lg')]: {
+    // marginLeft: 0,
+    [theme.breakpoints.up('md')]: {
       paddingLeft: 256
     }
   },
   wrapperShift: {
-    marginLeft: '-256px'
+    [theme.breakpoints.up('md')]: {
+      marginLeft: '-256px'
+    }
   },
   contentContainer: {
     display: 'flex',
