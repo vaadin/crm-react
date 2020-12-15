@@ -2,6 +2,15 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Building a Docker image
+
+1. build the app for production: `yarn build`
+1. create a docker image: `docker build -t crm-react-ui .`
+1. run the docker image: `docker run -it --rm -p 8080:80 crm-react-ui`
+1. open the app in the browser [http://localhost:8080](http://localhost:8080).
+
+   NOTE: In production mode the app is configured to access the backend at `./api` (e.g. `./api/login`). This can be changed e.g. by building the app for production with `REACT_APP_BASE_API=http://localhost:8082 yarn build` (in the step 1).
+
 ## Available Scripts
 
 In the project directory, you can run:
