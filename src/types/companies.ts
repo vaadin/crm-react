@@ -1,3 +1,5 @@
+import type { Deal } from './deals';
+
 export interface Companies {
   [name: string]: number;
 }
@@ -5,5 +7,9 @@ export interface Companies {
 export interface Company {
   id: number;
   name: string;
-  persisted: boolean;
+  address: string;
+  country: string;
+  state: string;
+  deals: Deal[];
+  persisted?: boolean;
 }

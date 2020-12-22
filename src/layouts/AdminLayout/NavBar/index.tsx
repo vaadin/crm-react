@@ -47,18 +47,13 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
   const content = (
     <>
       <Box ml={2} mt={2} mb={2}>
-        <Link
-          component={RouterLink}
-          to="/contacts"
-          underline="none"
-        >
-          <ListItem>List</ListItem>
+        <Link component={RouterLink} to="/contacts" underline="none">
+          <ListItem>Contacts</ListItem>
         </Link>
-        <Link
-          component={RouterLink}
-          to="/dashboard"
-          underline="none"
-        >
+        <Link component={RouterLink} to="/companies" underline="none">
+          <ListItem>Companies</ListItem>
+        </Link>
+        <Link component={RouterLink} to="/dashboard" underline="none">
           <ListItem>Dashboard</ListItem>
         </Link>
       </Box>
