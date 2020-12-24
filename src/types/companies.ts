@@ -9,6 +9,7 @@ export interface Company {
   name: string;
   address: string;
   country: string;
+  zipcode: string;
   state: string;
   deals: Deal[];
   persisted?: boolean;

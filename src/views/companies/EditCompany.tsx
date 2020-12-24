@@ -8,6 +8,7 @@ import {
   Theme
 } from '@material-ui/core';
 import type { Company } from '../../types/companies';
+import axios from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -51,7 +52,26 @@ const EditCompany: FC<EditCompanyProps> = ({
     });
   };
 
-  const handleDelete = () => {};
+  const zipcodeCheck = () => {
+    return (
+      companyData.country === 'United States' &&
+      !companyData.zipcode.match(/(^\d{5}$)|(^\d{5}-\d{4}$)/)
+    );
+  };
+
+  const handleDelete = async () => {
+    setLoading(true);
+    await axios
+      .delete(`${process.env.REACT_APP_BASE_API}/company/${companyData.id}`)
+      .then(() => {
+        setLoading(false);
+        updateTable();
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
+  };
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -59,8 +79,24 @@ const EditCompany: FC<EditCompanyProps> = ({
     event.preventDefault();
 
     setLoading(true);
-    setLoading(false);
-    updateTable();
+    if (companyData.id > 0) {
+      await axios
+        .put(
+          `${process.env.REACT_APP_BASE_API}/company/${companyData.id}`,
+          companyData
+        )
+        .then(() => {
+          setLoading(false);
+          updateTable();
+        });
+    } else {
+      await axios
+        .post(`${process.env.REACT_APP_BASE_API}/company`, companyData)
+        .then(() => {
+          setLoading(false);
+          updateTable();
+        });
+    }
   };
 
   return (
@@ -99,22 +135,26 @@ const EditCompany: FC<EditCompanyProps> = ({
         onChange={handleChange}
         variant="outlined"
         size="small"
+        error={zipcodeCheck()}
         required
       />
-      <TextField
-        name="state"
-        label="State"
-        value={companyData.state}
-        onChange={handleChange}
-        variant="outlined"
-        size="small"
-      />
+      {companyData.country === 'United States' && (
+        <TextField
+          name="state"
+          label="State"
+          value={companyData.state}
+          onChange={handleChange}
+          variant="outlined"
+          size="small"
+          required
+        />
+      )}
       <FormControl className={classes.control}>
         <Button
           variant="contained"
           color="primary"
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || zipcodeCheck()}
         >
           Save
         </Button>

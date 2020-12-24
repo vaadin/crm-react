@@ -126,6 +126,7 @@ const Contacts: FC = () => {
         name: '',
         address: '',
         country: '',
+        zipcode: '',
         state: '',
         deals: [],
         persisted: false

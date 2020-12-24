@@ -125,6 +125,7 @@ const Companies: FC = () => {
       name: '',
       address: '',
       country: '',
+      zipcode: '',
       state: '',
       deals: []
     };
@@ -196,18 +197,18 @@ const Companies: FC = () => {
             </TableHead>
             <TableBody>
               {stableSort(companies.data, order, orderBy).map(
-                (contact: Company) => (
+                (company: Company) => (
                   <TableRow
-                    key={contact.id}
+                    key={company.id}
                     hover
-                    selected={contact.id === current?.id}
-                    onClick={handleTableRowClick(contact)}
+                    selected={company.id === current?.id}
+                    onClick={handleTableRowClick(company)}
                   >
-                    <TableCell align="left">{contact.name}</TableCell>
-                    <TableCell align="left">{contact.country}</TableCell>
-                    <TableCell align="right">{contact.deals.length}</TableCell>
+                    <TableCell align="left">{company.name}</TableCell>
+                    <TableCell align="left">{company.country}</TableCell>
+                    <TableCell align="right">{company.deals?.length}</TableCell>
                     <TableCell align="right">
-                      ${getSum(contact.deals).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      ${getSum(company.deals || []).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                     </TableCell>
                   </TableRow>
                 )
