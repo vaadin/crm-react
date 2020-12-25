@@ -33,6 +33,13 @@ const routes: Routes = [
     exact: true,
     guard: AuthGuard,
     layout: AdminLayout,
+    path: '/companies',
+    component: lazy(() => import('./views/companies'))
+  },
+  {
+    exact: true,
+    guard: AuthGuard,
+    layout: AdminLayout,
     path: '/dashboard',
     component: lazy(() => import('./views/dashboard'))
   },

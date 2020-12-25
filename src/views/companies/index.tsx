@@ -15,19 +15,18 @@ import {
   Theme,
   TableSortLabel
 } from '@material-ui/core';
-import EditContact from './EditContact';
-import { getContacts } from '../../reducers/contacts';
+import EditCompany from './EditCompany';
 import { getCompanies } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
-import type { Contact } from '../../types/contact';
+import type { Company } from '../../types/companies';
+import type { Deal } from '../../types/deals';
 
 const headCells = [
-  { id: 'firstName', label: 'First Name' },
-  { id: 'lastName', label: 'Last Name' },
-  { id: 'email', label: 'Email' },
-  { id: 'status', label: 'Status' },
-  { id: 'company', label: 'Company' }
+  { id: 'name', label: 'Name' },
+  { id: 'country', label: 'Country' },
+  { id: 'nr', label: 'Active deals (nr)' },
+  { id: 'sum', label: 'Active deals (sum)' }
 ];
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -63,18 +62,31 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type Order = 'asc' | 'desc';
 
-const stableSort = (contacts: any, order: string, orderBy: string) => {
-  const data = [...contacts];
+const getSum = (deals: Deal[]) => {
+  return deals
+    .reduce((sum, cur) => sum + cur.price, 0)
+    .toFixed(2)
+    .toString();
+};
+
+const stableSort = (companies: any, order: string, orderBy: string) => {
+  const data = [...companies];
   data.sort((a: any, b: any) => {
     if (order === 'desc') {
-      if (orderBy === 'company') {
-        return a[orderBy].name > b[orderBy].name ? -1 : 1;
+      if (orderBy === 'nr') {
+        return a.deals.length > b.deals.length ? -1 : 1;
+      }
+      if (orderBy === 'sum') {
+        return getSum(a.deals) > getSum(b.deals) ? -1 : 1;
       }
       return a[orderBy] > b[orderBy] ? -1 : 1;
     }
     if (order === 'asc') {
-      if (orderBy === 'company') {
-        return a[orderBy].name < b[orderBy].name ? -1 : 1;
+      if (orderBy === 'nr') {
+        return a.deals.length < b.deals.length ? -1 : 1;
+      }
+      if (orderBy === 'sum') {
+        return getSum(a.deals) < getSum(b.deals) ? -1 : 1;
       }
       return a[orderBy] < b[orderBy] ? -1 : 1;
     }
@@ -85,54 +97,78 @@ const stableSort = (contacts: any, order: string, orderBy: string) => {
 
 let filter: string;
 
-const Contacts: FC = () => {
+const Companies: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [orderBy, setOrderBy] = React.useState<string>('firstName');
+  const [orderBy, setOrderBy] = React.useState<string>('name');
   const [order, setOrder] = React.useState<Order>('asc');
-  const [current, setCurrent] = useState<Contact>();
-  const { contacts, companies } = useSelector((state: State) => ({
-    contacts: state.contacts,
-    companies: state.companies
-  }));
+  const [current, setCurrent] = useState<Company>();
+  const companies = useSelector((state: State) => state.companies);
+  const [newCompanies, setNewCompanies] = useState<Company[]>(companies.data);
+  const [filterList, setFilterList] = useState<any>({
+    name: '',
+    country: '',
+    nr: '',
+    sum: ''
+  });
+
+  const getVisibleCompanies = () => {
+    let temp = companies.data;
+    Object.keys(filterList).forEach((field) => {
+      console.log(field, temp);
+      temp = temp.filter((company: any) => {
+        if (field === 'nr') {
+          return company.deals.length.toString().includes(filterList[field]);
+        }
+        if (field === 'sum') {
+          return getSum(company.deals).toString().includes(filterList[field]);
+        }
+        return company[field]
+          ?.toLowerCase()
+          .includes(filterList[field].toLowerCase());
+      });
+    });
+    setNewCompanies(temp);
+  };
 
   useEffect(() => {
-    dispatch(getContacts());
     dispatch(getCompanies());
   }, [dispatch]);
 
-  const handleTableRowClick = (contact: Contact) => () => {
-    if (current?.id === contact.id) {
-      setCurrent(undefined);
-    } else {
-      setCurrent(contact);
-    }
+  useEffect(() => {
+    getVisibleCompanies();
+  }, [companies, filterList]);
+
+  const handleTableRowClick = (company: Company) => () => {
+    setCurrent(current?.id === company.id ? undefined : company);
   };
 
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    filter = e.target.value;
-    dispatch(getContacts(filter));
+    dispatch(getCompanies(e.target.value));
   };
 
   const handleAddClick = () => {
-    const emptyContact: Contact = {
+    const emptyCompany: Company = {
       id: 0,
-      firstName: '',
-      lastName: '',
-      email: '',
-      status: '',
-      company: {
-        id: 0,
-        name: '',
-        address: '',
-        country: '',
-        zipcode: '',
-        state: '',
-        deals: [],
-        persisted: false
-      }
+      name: '',
+      address: '',
+      country: '',
+      zipcode: '',
+      state: '',
+      deals: []
     };
-    setCurrent(emptyContact);
+    setCurrent(emptyCompany);
+  };
+
+  const handleLocalFilter = (id: string) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = e.target;
+    console.log(id, value);
+    setFilterList({
+      ...filterList,
+      [id]: value
+    });
   };
 
   const createSortHandler = (property: string) => () => {
@@ -146,7 +182,7 @@ const Contacts: FC = () => {
   };
 
   const handleUpdateTable = () => {
-    dispatch(getContacts(filter));
+    dispatch(getCompanies(filter));
     setCurrent(undefined);
   };
 
@@ -163,7 +199,7 @@ const Contacts: FC = () => {
             onChange={handleFilter}
           />
           <Button className={classes.addButton} onClick={handleAddClick}>
-            Add contact
+            Add company
           </Button>
         </Toolbar>
       </Grid>
@@ -194,25 +230,36 @@ const Contacts: FC = () => {
                         </span>
                       ) : null}
                     </TableSortLabel>
+                    <TextField
+                      name={headCell.id}
+                      variant="outlined"
+                      size="small"
+                      type="search"
+                      value={filterList[headCell.id]}
+                      onChange={handleLocalFilter(headCell.id)}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {stableSort(contacts.data, order, orderBy).map(
-                (contact: Contact) => (
+              {stableSort(newCompanies, order, orderBy).map(
+                (company: Company) => (
                   <TableRow
-                    key={contact.id}
+                    key={company.id}
                     hover
-                    selected={contact.id === current?.id}
-                    onClick={handleTableRowClick(contact)}
+                    selected={company.id === current?.id}
+                    onClick={handleTableRowClick(company)}
                   >
-                    <TableCell align="left">{contact.firstName}</TableCell>
-                    <TableCell align="left">{contact.lastName}</TableCell>
-                    <TableCell align="left">{contact.email}</TableCell>
-                    <TableCell align="left">{contact.status}</TableCell>
-                    <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
-                      {contact.company.name}
+                    <TableCell align="left">{company.name}</TableCell>
+                    <TableCell align="left">{company.country}</TableCell>
+                    <TableCell align="right">{company.deals?.length}</TableCell>
+                    <TableCell align="right">
+                      $
+                      {getSum(company.deals || []).replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ','
+                      )}
                     </TableCell>
                   </TableRow>
                 )
@@ -223,9 +270,8 @@ const Contacts: FC = () => {
       </Grid>
       <Grid item md={4}>
         {current && (
-          <EditContact
-            contact={current}
-            companies={companies.data}
+          <EditCompany
+            company={current}
             handleCancel={handleCancel}
             updateTable={handleUpdateTable}
           />
@@ -235,4 +281,4 @@ const Contacts: FC = () => {
   );
 };
 
-export default Contacts;
+export default Companies;

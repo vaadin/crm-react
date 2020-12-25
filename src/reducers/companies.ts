@@ -23,9 +23,10 @@ const slice = createSlice({
 
 export const { reducer } = slice;
 
-export const getCompanies = (): AppThunk => async (dispatch) => {
+export const getCompanies = (filter?: string): AppThunk => async (dispatch) => {
+  const filterUrl = filter ? `?search=${filter}` : '';
   const response = await axios.get<Company[]>(
-    `${process.env.REACT_APP_BASE_API}/companies`
+    `${process.env.REACT_APP_BASE_API}/companies${filterUrl}`
   );
   dispatch(slice.actions.getCompanies(response.data));
 };
