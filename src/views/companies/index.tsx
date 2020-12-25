@@ -63,7 +63,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 type Order = 'asc' | 'desc';
 
 const getSum = (deals: Deal[]) => {
-  return deals.reduce((sum, cur) => sum + cur.price, 0);
+  return deals
+    .reduce((sum, cur) => sum + cur.price, 0)
+    .toFixed(2)
+    .toString();
 };
 
 const stableSort = (companies: any, order: string, orderBy: string) => {
@@ -101,22 +104,47 @@ const Companies: FC = () => {
   const [order, setOrder] = React.useState<Order>('asc');
   const [current, setCurrent] = useState<Company>();
   const companies = useSelector((state: State) => state.companies);
+  const [newCompanies, setNewCompanies] = useState<Company[]>(companies.data);
+  const [filterList, setFilterList] = useState<any>({
+    name: '',
+    country: '',
+    nr: '',
+    sum: ''
+  });
+
+  const getVisibleCompanies = () => {
+    let temp = companies.data;
+    Object.keys(filterList).forEach((field) => {
+      console.log(field, temp);
+      temp = temp.filter((company: any) => {
+        if (field === 'nr') {
+          return company.deals.length.toString().includes(filterList[field]);
+        }
+        if (field === 'sum') {
+          return getSum(company.deals).toString().includes(filterList[field]);
+        }
+        return company[field]
+          ?.toLowerCase()
+          .includes(filterList[field].toLowerCase());
+      });
+    });
+    setNewCompanies(temp);
+  };
 
   useEffect(() => {
     dispatch(getCompanies());
   }, [dispatch]);
 
+  useEffect(() => {
+    getVisibleCompanies();
+  }, [companies, filterList]);
+
   const handleTableRowClick = (company: Company) => () => {
-    if (current?.id === company.id) {
-      setCurrent(undefined);
-    } else {
-      setCurrent(company);
-    }
+    setCurrent(current?.id === company.id ? undefined : company);
   };
 
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    filter = e.target.value;
-    dispatch(getCompanies(filter));
+    dispatch(getCompanies(e.target.value));
   };
 
   const handleAddClick = () => {
@@ -130,6 +158,17 @@ const Companies: FC = () => {
       deals: []
     };
     setCurrent(emptyCompany);
+  };
+
+  const handleLocalFilter = (id: string) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = e.target;
+    console.log(id, value);
+    setFilterList({
+      ...filterList,
+      [id]: value
+    });
   };
 
   const createSortHandler = (property: string) => () => {
@@ -191,12 +230,20 @@ const Companies: FC = () => {
                         </span>
                       ) : null}
                     </TableSortLabel>
+                    <TextField
+                      name={headCell.id}
+                      variant="outlined"
+                      size="small"
+                      type="search"
+                      value={filterList[headCell.id]}
+                      onChange={handleLocalFilter(headCell.id)}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {stableSort(companies.data, order, orderBy).map(
+              {stableSort(newCompanies, order, orderBy).map(
                 (company: Company) => (
                   <TableRow
                     key={company.id}
@@ -208,7 +255,11 @@ const Companies: FC = () => {
                     <TableCell align="left">{company.country}</TableCell>
                     <TableCell align="right">{company.deals?.length}</TableCell>
                     <TableCell align="right">
-                      ${getSum(company.deals || []).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      $
+                      {getSum(company.deals || []).replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ','
+                      )}
                     </TableCell>
                   </TableRow>
                 )
