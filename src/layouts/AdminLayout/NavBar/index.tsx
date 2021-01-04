@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Hidden,
@@ -33,6 +33,9 @@ const useStyles = makeStyles(() => ({
   },
   tutorialTitle: {
     paddingRight: 64
+  },
+  linkStyle: {
+    textDecoration: 'none'
   }
 }));
 
@@ -47,20 +50,20 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
   const content = (
     <>
       <Box ml={2} mt={2} mb={2}>
-        <Link
-          component={RouterLink}
+        <NavLink
           to="/contacts"
-          underline="none"
+          className={classes.linkStyle}
+          activeStyle={{ color: 'blue', fontWeight: 'bold' }}
         >
-          <ListItem>List</ListItem>
-        </Link>
-        <Link
-          component={RouterLink}
+          <ListItem>Contacts</ListItem>
+        </NavLink>
+        <NavLink
           to="/dashboard"
-          underline="none"
+          className={classes.linkStyle}
+          activeStyle={{ color: 'blue', fontWeight: 'bold' }}
         >
           <ListItem>Dashboard</ListItem>
-        </Link>
+        </NavLink>
       </Box>
       <Divider />
       <Link
