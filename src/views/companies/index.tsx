@@ -112,10 +112,17 @@ const Companies: FC = () => {
     sum: ''
   });
 
+  const countries = Array.from(
+    new Set(
+      companies.data.map((company) => {
+        return company.country;
+      })
+    )
+  );
+
   const getVisibleCompanies = () => {
     let temp = companies.data;
     Object.keys(filterList).forEach((field) => {
-      console.log(field, temp);
       temp = temp.filter((company: any) => {
         if (field === 'nr') {
           return company.deals.length.toString().includes(filterList[field]);
@@ -144,7 +151,8 @@ const Companies: FC = () => {
   };
 
   const handleFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(getCompanies(e.target.value));
+    filter = e.target.value;
+    dispatch(getCompanies(filter));
   };
 
   const handleAddClick = () => {
@@ -164,7 +172,6 @@ const Companies: FC = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { value } = e.target;
-    console.log(id, value);
     setFilterList({
       ...filterList,
       [id]: value
@@ -212,7 +219,11 @@ const Companies: FC = () => {
                 {headCells.map((headCell) => (
                   <TableCell
                     key={headCell.id}
-                    align="left"
+                    align={
+                      headCell.id === 'name' || headCell.id === 'country'
+                        ? 'left'
+                        : 'right'
+                    }
                     className={classes.headerColumn}
                     sortDirection={orderBy === headCell.id ? order : false}
                   >
@@ -237,6 +248,7 @@ const Companies: FC = () => {
                       type="search"
                       value={filterList[headCell.id]}
                       onChange={handleLocalFilter(headCell.id)}
+                      style={{ display: 'block' }}
                     />
                   </TableCell>
                 ))}
@@ -272,6 +284,7 @@ const Companies: FC = () => {
         {current && (
           <EditCompany
             company={current}
+            countries={countries}
             handleCancel={handleCancel}
             updateTable={handleUpdateTable}
           />

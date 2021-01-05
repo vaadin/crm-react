@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import type { FC, FormEvent } from 'react';
 import {
   TextField,
+  Select,
   FormControl,
+  InputLabel,
   Button,
   makeStyles,
   Theme
@@ -28,12 +30,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface EditCompanyProps {
   company?: Company;
+  countries: string[];
   handleCancel: () => void;
   updateTable: () => void;
 }
 
 const EditCompany: FC<EditCompanyProps> = ({
   company,
+  countries,
   handleCancel,
   updateTable
 }) => {
@@ -110,15 +114,28 @@ const EditCompany: FC<EditCompanyProps> = ({
         size="small"
         required
       />
-      <TextField
-        name="country"
-        label="Country"
-        value={companyData.country}
-        onChange={handleChange}
-        variant="outlined"
-        size="small"
-        required
-      />
+      <FormControl variant="outlined" size="small" required>
+        <InputLabel htmlFor="outlined-country">Country</InputLabel>
+        <Select
+          label="Country"
+          value={companyData.country}
+          onChange={handleChange}
+          native
+          inputProps={{
+            name: 'country',
+            id: 'outlined-country'
+          }}
+        >
+          <option value="" className={classes.hidden} />
+          {countries?.map((country) => {
+            return (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            );
+          })}
+        </Select>
+      </FormControl>
       <TextField
         name="address"
         label="Address"
