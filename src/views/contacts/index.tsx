@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core';
 import EditContact from './EditContact';
 import { getContacts } from '../../reducers/contacts';
-import { getCompanies } from '../../reducers/companies';
+import { getCompanies, getCountries } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import type { Contact } from '../../types/contact';
@@ -91,6 +91,7 @@ const Contacts: FC = () => {
   const [orderBy, setOrderBy] = React.useState<string>('firstName');
   const [order, setOrder] = React.useState<Order>('asc');
   const [current, setCurrent] = useState<Contact>();
+  const [isAdded, setIsAdded] = useState<boolean>(false);
   const { contacts, companies } = useSelector((state: State) => ({
     contacts: state.contacts,
     companies: state.companies
@@ -99,7 +100,22 @@ const Contacts: FC = () => {
   useEffect(() => {
     dispatch(getContacts());
     dispatch(getCompanies());
+    if (companies.countries.length === 0) {
+      dispatch(getCountries());
+    }
   }, [dispatch]);
+
+  useEffect(() => {
+    setIsAdded(false);
+  }, [current]);
+
+  const handleChangeAdded = () => {
+    setIsAdded(true);
+  };
+
+  const handleUpdateCompanies = () => {
+    dispatch(getCompanies());
+  };
 
   const handleTableRowClick = (contact: Contact) => () => {
     if (current?.id === contact.id) {
@@ -228,6 +244,9 @@ const Contacts: FC = () => {
             companies={companies.data}
             handleCancel={handleCancel}
             updateTable={handleUpdateTable}
+            onCompaniesUpdate={handleUpdateCompanies}
+            companyAdded={isAdded}
+            onChangeAdded={handleChangeAdded}
           />
         )}
       </Grid>
