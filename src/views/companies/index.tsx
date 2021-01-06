@@ -16,7 +16,7 @@ import {
   TableSortLabel
 } from '@material-ui/core';
 import EditCompany from './EditCompany';
-import { getCompanies } from '../../reducers/companies';
+import { getCompanies, getCountries } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import type { Company } from '../../types/companies';
@@ -103,8 +103,8 @@ const Companies: FC = () => {
   const [orderBy, setOrderBy] = React.useState<string>('name');
   const [order, setOrder] = React.useState<Order>('asc');
   const [current, setCurrent] = useState<Company>();
-  const companies = useSelector((state: State) => state.companies);
-  const [newCompanies, setNewCompanies] = useState<Company[]>(companies.data);
+  const { data, countries } = useSelector((state: State) => state.companies);
+  const [newCompanies, setNewCompanies] = useState<Company[]>(data);
   const [filterList, setFilterList] = useState<any>({
     name: '',
     country: '',
@@ -112,16 +112,8 @@ const Companies: FC = () => {
     sum: ''
   });
 
-  const countries = Array.from(
-    new Set(
-      companies.data.map((company) => {
-        return company.country;
-      })
-    )
-  );
-
   const getVisibleCompanies = () => {
-    let temp = companies.data;
+    let temp = data;
     Object.keys(filterList).forEach((field) => {
       temp = temp.filter((company: any) => {
         if (field === 'nr') {
@@ -140,11 +132,14 @@ const Companies: FC = () => {
 
   useEffect(() => {
     dispatch(getCompanies());
+    if (countries.length === 0) {
+      dispatch(getCountries());
+    }
   }, [dispatch]);
 
   useEffect(() => {
     getVisibleCompanies();
-  }, [companies, filterList]);
+  }, [data, filterList]);
 
   const handleTableRowClick = (company: Company) => () => {
     setCurrent(current?.id === company.id ? undefined : company);

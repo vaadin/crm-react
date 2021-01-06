@@ -5,10 +5,12 @@ import type { Company } from '../types/companies';
 
 export interface CompaniesState {
   data: Company[];
+  countries: string[];
 }
 
 const initialState: CompaniesState = {
-  data: []
+  data: [],
+  countries: []
 };
 
 const slice = createSlice({
@@ -17,6 +19,9 @@ const slice = createSlice({
   reducers: {
     getCompanies(state: CompaniesState, action: PayloadAction<Company[]>) {
       state.data = action.payload;
+    },
+    getCountries(state: CompaniesState, action: PayloadAction<string[]>) {
+      state.countries = action.payload;
     }
   }
 });
@@ -29,6 +34,13 @@ export const getCompanies = (filter?: string): AppThunk => async (dispatch) => {
     `${process.env.REACT_APP_BASE_API}/companies${filterUrl}`
   );
   dispatch(slice.actions.getCompanies(response.data));
+};
+
+export const getCountries = (): AppThunk => async (dispatch) => {
+  const response = await axios.get<string[]>(
+    `${process.env.REACT_APP_BASE_API}/countries`
+  );
+  dispatch(slice.actions.getCountries(response.data));
 };
 
 export default slice;
