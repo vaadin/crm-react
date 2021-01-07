@@ -89,10 +89,12 @@ const EditContact: FC<EditContactProps> = ({
   const [contactData, setContactData] = useState<any>(contact);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
   const { countries } = useSelector((state: State) => state.companies);
 
   useEffect(() => {
     setContactData({ ...contact, company: contact?.company.id });
+    setError('');
   }, [contact]);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
@@ -147,6 +149,12 @@ const EditContact: FC<EditContactProps> = ({
         .then(() => {
           setLoading(false);
           updateTable();
+        })
+        .catch((err) => {
+          setLoading(false);
+          if (err === 'failure') {
+            setError('Email is already exists');
+          }
         });
     } else {
       await axios
@@ -154,6 +162,12 @@ const EditContact: FC<EditContactProps> = ({
         .then(() => {
           setLoading(false);
           updateTable();
+        })
+        .catch((err) => {
+          setLoading(false);
+          if (err === 'failure') {
+            setError('Email is already exists');
+          }
         });
     }
   };
@@ -188,6 +202,8 @@ const EditContact: FC<EditContactProps> = ({
           variant="outlined"
           size="small"
           required
+          error={error !== ''}
+          helperText={error}
         />
         <FormControl variant="outlined" size="small" required>
           <InputLabel htmlFor="outlined-status">Status</InputLabel>
