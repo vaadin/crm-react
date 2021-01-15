@@ -19,8 +19,7 @@ import EditCompany from './EditCompany';
 import { getCompanies, getCountries } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
-import type { Company } from '../../types/companies';
-import type { Deal } from '../../types/deals';
+import type { Company, Deal } from '../../types';
 
 const headCells = [
   { id: 'name', label: 'Name' },

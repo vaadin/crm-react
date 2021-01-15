@@ -65,6 +65,13 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
           <ListItem>Companies</ListItem>
         </NavLink>
         <NavLink
+          to="/deals"
+          className={classes.linkStyle}
+          activeStyle={{ color: 'blue', fontWeight: 'bold' }}
+        >
+          <ListItem>Deals</ListItem>
+        </NavLink>
+        <NavLink
           to="/dashboard"
           className={classes.linkStyle}
           activeStyle={{ color: 'blue', fontWeight: 'bold' }}

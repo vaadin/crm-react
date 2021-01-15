@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from '../utils';
 import type { AppThunk } from '../store';
-import type { Companies } from '../types/companies';
+import type { Companies } from '../types';
 
 export interface CompanyInfoState {
   data: Companies;

@@ -20,7 +20,7 @@ import { getContacts } from '../../reducers/contacts';
 import { getCompanies, getCountries } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
-import type { Contact } from '../../types/contact';
+import type { Contact } from '../../types';
 
 const headCells = [
   { id: 'firstName', label: 'First Name' },
