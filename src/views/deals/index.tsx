@@ -7,8 +7,14 @@ import { useDispatch } from '../../store';
 import { getCompanies } from '../../reducers/companies';
 import { getContacts } from '../../reducers/contacts';
 import { getUsers } from '../../reducers/users';
+import { getDeals } from '../../reducers/deals';
 
-const useStyles = makeStyles((theme: Theme) => ({}));
+const useStyles = makeStyles((theme: Theme) => ({
+  padding1: {
+    padding: theme.spacing(1),
+    textAlign: 'center'
+  }
+}));
 
 const Deals: FC = () => {
   const classes = useStyles();
@@ -26,22 +32,29 @@ const Deals: FC = () => {
     dispatch(getCompanies());
     dispatch(getContacts());
     dispatch(getUsers());
+    dispatch(getDeals());
   }, [dispatch]);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
-    setFilterData({
-      ...filterData,
+    setFilterData((prev: any) => ({
+      ...prev,
       [e.target.name]:
         e.target.name === 'state' ? e.target.checked : e.target.value
-    });
+    }));
   };
 
   return (
-    <Grid container>
-      <Grid container justify="space-between" alignItems="center">
+    <Grid container className={classes.padding1}>
+      <Grid
+        container
+        item
+        justify="space-between"
+        alignItems="center"
+        spacing={2}
+      >
         <ActionBar filterData={filterData} onChangeFilter={handleChange} />
       </Grid>
-      <Grid container item>
+      <Grid container item justify="space-around" spacing={2}>
         <DragDrop />
       </Grid>
     </Grid>

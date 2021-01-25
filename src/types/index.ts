@@ -52,5 +52,6 @@ export interface Deal {
   user: User;
   notes: Note[];
   roles: Role[];
+  company: Company;
   persisted?: boolean;
 }

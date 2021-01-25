@@ -66,7 +66,7 @@ const ActionBar: FC<ActionBarProps> = ({filterData, onChangeFilter}) => {
         container
         item
         alignItems="center"
-        spacing={3}
+        spacing={2}
         className={classes.filter}
       >
         <Grid item>
