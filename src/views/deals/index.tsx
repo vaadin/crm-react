@@ -8,6 +8,7 @@ import { getCompanies } from '../../reducers/companies';
 import { getContacts } from '../../reducers/contacts';
 import { getUsers } from '../../reducers/users';
 import { getDeals } from '../../reducers/deals';
+import type { FilterData } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   padding1: {
@@ -19,12 +20,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Deals: FC = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [filterData, setFilterData] = useState<any>({
+  const [filterData, setFilterData] = useState<FilterData>({
     company: [],
     contact: [],
     user: [],
-    minDeal: '',
-    maxDeal: '',
+    minDeal: undefined,
+    maxDeal: undefined,
     state: false
   });
 
@@ -32,8 +33,11 @@ const Deals: FC = () => {
     dispatch(getCompanies());
     dispatch(getContacts());
     dispatch(getUsers());
-    dispatch(getDeals());
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getDeals(filterData));
+  }, [filterData]);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     setFilterData((prev: any) => ({

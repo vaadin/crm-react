@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     border: '1px solid black',
+    background: 'white',
     height: 100,
     marginBottom: theme.spacing(1)
   },

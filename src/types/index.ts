@@ -55,3 +55,12 @@ export interface Deal {
   company: Company;
   persisted?: boolean;
 }
+
+export interface FilterData {
+  company: Company[];
+  contact: Contact[];
+  user: User[];
+  minDeal: number | undefined;
+  maxDeal: number | undefined;
+  state: boolean;
+}

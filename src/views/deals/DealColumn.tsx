@@ -14,7 +14,8 @@ import DealItem from './DealItem';
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     padding: theme.spacing(1),
-    border: '1px solid black'
+    border: '1px solid black',
+    background: '#eeffee'
   }
 }));
 

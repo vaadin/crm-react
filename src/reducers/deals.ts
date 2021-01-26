@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from '../utils';
 import type { AppThunk } from '../store';
-import type { Deal } from '../types';
+import type { Deal, FilterData } from '../types';
 
 export interface DealsState {
   data: Deal[];
@@ -34,9 +34,44 @@ const slice = createSlice({
 
 export const { reducer } = slice;
 
-export const getDeals = (): AppThunk => async (dispatch) => {
+export const getDeals = (filterData: FilterData): AppThunk => async (
+  dispatch
+) => {
+  console.log(filterData);
+  const { company, contact, user, maxDeal, minDeal, state } = filterData;
+  let filterURL = '';
+  if (
+    company.length > 0 ||
+    contact.length > 0 ||
+    user.length > 0 ||
+    minDeal ||
+    maxDeal ||
+    state
+  ) {
+    filterURL += '?';
+  }
+  if (company.length > 0) {
+    filterURL += `company=${company.toString()}&`;
+  }
+  if (contact.length > 0) {
+    filterURL += `contact=${contact.toString()}&`;
+  }
+  if (user.length > 0) {
+    filterURL += `user=${user.toString()}&`;
+  }
+  if (minDeal) {
+    filterURL += `min=${minDeal}&`;
+  }
+  if (maxDeal) {
+    filterURL += `max=${maxDeal}&`;
+  }
+  if (state) {
+    filterURL += `active=${state}&`;
+  }
+  filterURL = filterURL.substr(0, filterURL.length - 1);
+
   const response = await axios.get<[]>(
-    `${process.env.REACT_APP_BASE_API}/deals`
+    `${process.env.REACT_APP_BASE_API}/deals${filterURL}`
   );
   dispatch(slice.actions.getDeals(response.data));
 };
