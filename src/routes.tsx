@@ -40,6 +40,13 @@ const routes: Routes = [
     exact: true,
     guard: AuthGuard,
     layout: AdminLayout,
+    path: '/deals',
+    component: lazy(() => import('./views/deals'))
+  },
+  {
+    exact: true,
+    guard: AuthGuard,
+    layout: AdminLayout,
     path: '/dashboard',
     component: lazy(() => import('./views/dashboard'))
   },

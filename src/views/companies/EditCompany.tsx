@@ -9,7 +9,7 @@ import {
   makeStyles,
   Theme
 } from '@material-ui/core';
-import type { Company } from '../../types/companies';
+import type { Company } from '../../types';
 import axios from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({

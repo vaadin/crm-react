@@ -13,8 +13,7 @@ import {
 import EditCompany from '../companies/EditCompany';
 import { useSelector } from '../../store';
 import { State } from '../../reducers';
-import type { Contact } from '../../types/contact';
-import type { Company } from '../../types/companies';
+import type { Company, Contact } from '../../types';
 import axios from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({

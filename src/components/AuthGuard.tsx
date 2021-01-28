@@ -4,10 +4,7 @@ import { Redirect, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import useAuth from '../hooks/useAuth';
 
-const guardPath = [
-  '/contacts',
-  '/dashboard'
-];
+const guardPath = ['/contacts', '/companies', '/deals', '/dashboard'];
 
 interface AuthGuardProps {
   children?: ReactNode;
