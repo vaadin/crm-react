@@ -1,23 +1,23 @@
 import React from 'react';
 import type { FC } from 'react';
-import { makeStyles, Theme } from '@material-ui/core';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DealColumn from './DealColumn';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import { updateDeal } from '../../reducers/deals';
 
-const DealStatus = ['New', 'ProposalSent', 'ClosedWon', 'ClosedLost'];
+const DealStatus = [
+  { active: true, name: 'New' },
+  { active: true, name: 'ProposalSent' },
+  { active: false, name: 'ClosedWon' },
+  { active: false, name: 'ClosedLost' }
+];
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column'
-  }
-}));
+interface DragDropProps {
+  isActive: boolean;
+}
 
-const DragDrop: FC = () => {
-  const classes = useStyles();
+const DragDrop: FC<DragDropProps> = ({ isActive }) => {
   const dispatch = useDispatch();
   const { data } = useSelector((state: State) => state.deals);
 
@@ -27,7 +27,7 @@ const DragDrop: FC = () => {
 
   // Handle drag & drop
   const onDragEnd = (result: any) => {
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
 
     // Do nothing if item is dropped outside the list
     if (!destination) {
@@ -57,18 +57,27 @@ const DragDrop: FC = () => {
     // Moting items to the other column
     const [movingItem] = columnStart.splice(source.index, 1);
     columnFinish.splice(destination.index, 0, movingItem);
-    console.log(movingItem);
-    dispatch(updateDeal(movingItem.id, {
-      ...movingItem,
-      status: destination.droppableId
-    }));
+
+    dispatch(
+      updateDeal(movingItem.id, {
+        ...movingItem,
+        status: destination.droppableId
+      })
+    );
   };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      {DealStatus.map((status) => {
+      {DealStatus.filter(
+        (status) =>
+          isActive === false || (isActive === true && status.active === true)
+      ).map((status) => {
         return (
-          <DealColumn key={status} title={status} items={getItems(status)} />
+          <DealColumn
+            key={status.name}
+            title={status.name}
+            items={getItems(status.name)}
+          />
         );
       })}
     </DragDropContext>

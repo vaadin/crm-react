@@ -25,7 +25,10 @@ const slice = createSlice({
       if (action.payload === 'failure') {
         state.error = true;
       } else {
-        state.data = action.payload;
+        const updatedItem = action.payload;
+        state.data[
+          state.data.findIndex((item) => item.id === updatedItem.id)
+        ] = updatedItem;
         state.error = false;
       }
     }
@@ -37,7 +40,6 @@ export const { reducer } = slice;
 export const getDeals = (filterData: FilterData): AppThunk => async (
   dispatch
 ) => {
-  console.log(filterData);
   const { company, contact, user, maxDeal, minDeal, state } = filterData;
   let filterURL = '';
   if (

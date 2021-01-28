@@ -55,7 +55,7 @@ const DealItem: FC<DealItemProps> = (props: DealItemProps) => {
         >
           <Typography className={classes.textWrap}>{item.name}</Typography>
           <Typography className={classes.textWrap}>
-            {item.company?.name}
+            {item.company?.name || 'Unknown'}
           </Typography>
           <Typography className={classes.textWrap}>
             {item.user?.name}

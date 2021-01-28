@@ -59,7 +59,7 @@ const Deals: FC = () => {
         <ActionBar filterData={filterData} onChangeFilter={handleChange} />
       </Grid>
       <Grid container item justify="space-around" spacing={2}>
-        <DragDrop />
+        <DragDrop isActive={filterData.state} />
       </Grid>
     </Grid>
   );
