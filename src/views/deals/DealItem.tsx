@@ -2,6 +2,7 @@ import React from 'react';
 import type { FC } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { makeStyles, Theme, ListItem, Typography } from '@material-ui/core';
+import type { Deal } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   dealItem: {
@@ -11,7 +12,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: '1px solid black',
     background: 'white',
     height: 100,
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
+    boxShadow: '4px 4px 4px 0px rgba(173,173,173,1)'
   },
   textWrap: {
     whiteSpace: 'nowrap',
@@ -34,11 +36,18 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
 interface DealItemProps {
   item: any;
   index: number;
+  onClickItem: (deal: Deal) => void;
+  toggleDrawer: (open: boolean) => void;
 }
 
 const DealItem: FC<DealItemProps> = (props: DealItemProps) => {
   const classes = useStyles();
-  const { item, index } = props;
+  const { item, index, onClickItem, toggleDrawer } = props;
+
+  const handleClickItem = () => {
+    toggleDrawer(true);
+    onClickItem(item);
+  };
 
   return (
     <Draggable draggableId={item.id.toString()} index={index}>
@@ -52,6 +61,7 @@ const DealItem: FC<DealItemProps> = (props: DealItemProps) => {
             provided.draggableProps.style
           )}
           className={classes.dealItem}
+          onClick={handleClickItem}
         >
           <Typography className={classes.textWrap}>{item.name}</Typography>
           <Typography className={classes.textWrap}>
@@ -60,7 +70,6 @@ const DealItem: FC<DealItemProps> = (props: DealItemProps) => {
           <Typography className={classes.textWrap}>
             {item.user?.name}
           </Typography>
-          {/* <ListItemText primary={item.name} secondary={item.company?.name} /> */}
         </ListItem>
       )}
     </Draggable>
