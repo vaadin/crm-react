@@ -19,7 +19,7 @@ import EditCompany from './EditCompany';
 import { getCompanies, getCountries } from '../../reducers/companies';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
-import type { Company, Deal } from '../../types';
+import type { Company } from '../../types';
 
 const headCells = [
   { id: 'name', label: 'Name' },
@@ -61,11 +61,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 type Order = 'asc' | 'desc';
 
-const getSum = (deals: Deal[]) => {
-  return deals
-    .reduce((sum, cur) => sum + cur.price, 0)
-    .toFixed(2)
-    .toString();
+const getDealPrice = (dealTotal: number) => {
+  return dealTotal?.toFixed(2).toString() || '0.00';
 };
 
 const stableSort = (companies: any, order: string, orderBy: string) => {
@@ -73,19 +70,19 @@ const stableSort = (companies: any, order: string, orderBy: string) => {
   data.sort((a: any, b: any) => {
     if (order === 'desc') {
       if (orderBy === 'nr') {
-        return a.deals.length > b.deals.length ? -1 : 1;
+        return a.dealCount > b.dealCount ? -1 : 1;
       }
       if (orderBy === 'sum') {
-        return getSum(a.deals) > getSum(b.deals) ? -1 : 1;
+        return getDealPrice(a.dealTotal) > getDealPrice(b.dealTotal) ? -1 : 1;
       }
       return a[orderBy] > b[orderBy] ? -1 : 1;
     }
     if (order === 'asc') {
       if (orderBy === 'nr') {
-        return a.deals.length < b.deals.length ? -1 : 1;
+        return a.dealCount < b.dealCount ? -1 : 1;
       }
       if (orderBy === 'sum') {
-        return getSum(a.deals) < getSum(b.deals) ? -1 : 1;
+        return getDealPrice(a.dealTotal) < getDealPrice(b.dealTotal) ? -1 : 1;
       }
       return a[orderBy] < b[orderBy] ? -1 : 1;
     }
@@ -116,10 +113,10 @@ const Companies: FC = () => {
     Object.keys(filterList).forEach((field) => {
       temp = temp.filter((company: any) => {
         if (field === 'nr') {
-          return company.deals.length.toString().includes(filterList[field]);
+          return company.dealCount.toString().includes(filterList[field]);
         }
         if (field === 'sum') {
-          return getSum(company.deals).toString().includes(filterList[field]);
+          return getDealPrice(company.dealTotal).includes(filterList[field]);
         }
         return company[field]
           ?.toLowerCase()
@@ -157,7 +154,8 @@ const Companies: FC = () => {
       country: '',
       zipcode: '',
       state: '',
-      deals: []
+      dealCount: 0,
+      dealTotal: 0
     };
     setCurrent(emptyCompany);
   };
@@ -259,10 +257,10 @@ const Companies: FC = () => {
                   >
                     <TableCell align="left">{company.name}</TableCell>
                     <TableCell align="left">{company.country}</TableCell>
-                    <TableCell align="right">{company.deals?.length}</TableCell>
+                    <TableCell align="right">{company.dealCount}</TableCell>
                     <TableCell align="right">
                       $
-                      {getSum(company.deals || []).replace(
+                      {getDealPrice(company.dealTotal).replace(
                         /\B(?=(\d{3})+(?!\d))/g,
                         ','
                       )}
