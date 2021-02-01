@@ -5,6 +5,7 @@ import DealColumn from './DealColumn';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import { updateDeal } from '../../reducers/deals';
+import { Deal } from '../../types';
 
 const DealStatus = [
   { active: true, name: 'New' },
@@ -15,9 +16,15 @@ const DealStatus = [
 
 interface DragDropProps {
   isActive: boolean;
+  setCurDeal: (deal: Deal) => void;
+  toggleDrawer: (open: boolean) => void;
 }
 
-const DragDrop: FC<DragDropProps> = ({ isActive }) => {
+const DragDrop: FC<DragDropProps> = ({
+  isActive,
+  setCurDeal,
+  toggleDrawer
+}) => {
   const dispatch = useDispatch();
   const { data } = useSelector((state: State) => state.deals);
 
@@ -33,6 +40,12 @@ const DragDrop: FC<DragDropProps> = ({ isActive }) => {
     if (!destination) {
       return;
     }
+
+    // Find column from which the item was dragged from
+    const columnStart = getItems(source.droppableId);
+    // Find column in which the item was dropped
+    const columnFinish = getItems(destination.droppableId);
+
     // Do nothing if the item is dropped into the same place
     if (
       destination.droppableId === source.droppableId &&
@@ -41,20 +54,13 @@ const DragDrop: FC<DragDropProps> = ({ isActive }) => {
       return;
     }
 
-    // Find column from which the item was dragged from
-    const columnStart = getItems(source.droppableId);
-
-    // Find column in which the item was dropped
-    const columnFinish = getItems(destination.droppableId);
-
     // Moving items in the same list
     if (source.droppableId === destination.droppableId) {
-      // const [movingItem] = columnStart.splice(source.index, 1);
-      // columnFinish.splice(destination.index, 0, movingItem);
+      // do something if necessary but not now
       return;
     }
 
-    // Moting items to the other column
+    // Moving items to the other column
     const [movingItem] = columnStart.splice(source.index, 1);
     columnFinish.splice(destination.index, 0, movingItem);
 
@@ -77,6 +83,8 @@ const DragDrop: FC<DragDropProps> = ({ isActive }) => {
             key={status.name}
             title={status.name}
             items={getItems(status.name)}
+            onClickItem={setCurDeal}
+            toggleDrawer={toggleDrawer}
           />
         );
       })}

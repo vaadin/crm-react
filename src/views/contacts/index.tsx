@@ -144,8 +144,8 @@ const Contacts: FC = () => {
         country: '',
         zipcode: '',
         state: '',
-        deals: [],
-        persisted: false
+        dealCount: 0,
+        dealTotal: 0
       }
     };
     setCurrent(emptyContact);

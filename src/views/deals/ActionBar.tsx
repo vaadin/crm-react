@@ -50,9 +50,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface ActionBarProps {
   filterData: any;
   onChangeFilter: (e: React.ChangeEvent<any>) => void;
+  toggleDrawer: (open: boolean) => void;
 }
 
-const ActionBar: FC<ActionBarProps> = ({filterData, onChangeFilter}) => {
+const ActionBar: FC<ActionBarProps> = ({
+  filterData,
+  onChangeFilter,
+  toggleDrawer
+}) => {
   const classes = useStyles();
   const { contacts, companies, users } = useSelector((state: State) => ({
     contacts: state.contacts,
@@ -136,7 +141,9 @@ const ActionBar: FC<ActionBarProps> = ({filterData, onChangeFilter}) => {
                   <Checkbox
                     checked={filterData.contact.indexOf(contact.id) > -1}
                   />
-                  <ListItemText primary={`${contact.firstName} ${contact.lastName}`} />
+                  <ListItemText
+                    primary={`${contact.firstName} ${contact.lastName}`}
+                  />
                 </MenuItem>
               ))}
             </Select>
@@ -168,9 +175,7 @@ const ActionBar: FC<ActionBarProps> = ({filterData, onChangeFilter}) => {
             >
               {users.data.map((user) => (
                 <MenuItem key={user.id} value={user.id}>
-                  <Checkbox
-                    checked={filterData.user.indexOf(user.id) > -1}
-                  />
+                  <Checkbox checked={filterData.user.indexOf(user.id) > -1} />
                   <ListItemText primary={user.name} />
                 </MenuItem>
               ))}
@@ -204,14 +209,16 @@ const ActionBar: FC<ActionBarProps> = ({filterData, onChangeFilter}) => {
 
         <Grid item>
           <FormControlLabel
-            control={<Checkbox name="state" color="primary" checked={filterData.state} onChange={onChangeFilter} />}
+            control={
+              <Checkbox name="state" color="primary" checked={filterData.state} onChange={onChangeFilter} />
+            }
             label="Active only"
           />
         </Grid>
       </Grid>
 
       <Grid item>
-        <Button className={classes.addButton}>Add Deal</Button>
+        <Button className={classes.addButton} onClick={() => toggleDrawer(true)}>Add Deal</Button>
       </Grid>
     </>
   );

@@ -9,8 +9,8 @@ export interface Company {
   country: string;
   zipcode: string;
   state: string;
-  deals: Deal[];
-  persisted?: boolean;
+  dealCount: number;
+  dealTotal: number;
 }
 
 export interface Contact {

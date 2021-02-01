@@ -62,7 +62,8 @@ const emptyCompany: Company = {
   country: '',
   zipcode: '',
   state: '',
-  deals: []
+  dealCount: 0,
+  dealTotal: 0
 };
 
 interface EditContactProps {

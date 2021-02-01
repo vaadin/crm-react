@@ -81,7 +81,6 @@ export const getDeals = (filterData: FilterData): AppThunk => async (
 export const updateDeal = (id: number, data: Deal): AppThunk => async (
   dispatch
 ) => {
-  console.log(id, data);
   const response = await axios.put(
     `${process.env.REACT_APP_BASE_API}/deal/${id}`,
     data

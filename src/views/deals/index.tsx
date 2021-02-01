@@ -3,12 +3,13 @@ import type { FC } from 'react';
 import { Grid, makeStyles, Theme } from '@material-ui/core';
 import ActionBar from './ActionBar';
 import DragDrop from './DragDrop';
+import EditDeal from './EditDeal';
 import { useDispatch } from '../../store';
 import { getCompanies } from '../../reducers/companies';
 import { getContacts } from '../../reducers/contacts';
 import { getUsers } from '../../reducers/users';
 import { getDeals } from '../../reducers/deals';
-import type { FilterData } from '../../types';
+import type { Deal, FilterData } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   padding1: {
@@ -28,6 +29,8 @@ const Deals: FC = () => {
     maxDeal: undefined,
     state: false
   });
+  const [isEdit, setEdit] = useState<boolean>(false);
+  const [curDeal, setCurDeal] = useState<Deal>();
 
   useEffect(() => {
     dispatch(getCompanies());
@@ -38,6 +41,11 @@ const Deals: FC = () => {
   useEffect(() => {
     dispatch(getDeals(filterData));
   }, [filterData]);
+
+  const toggleDrawer = (open: boolean) => {
+    setCurDeal(undefined);
+    setEdit(open);
+  };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     setFilterData((prev: any) => ({
@@ -56,10 +64,15 @@ const Deals: FC = () => {
         alignItems="center"
         spacing={2}
       >
-        <ActionBar filterData={filterData} onChangeFilter={handleChange} />
+        <ActionBar
+          filterData={filterData}
+          onChangeFilter={handleChange}
+          toggleDrawer={toggleDrawer}
+        />
       </Grid>
       <Grid container item justify="space-around" spacing={2}>
-        <DragDrop isActive={filterData.state} />
+        <DragDrop isActive={filterData.state} setCurDeal={setCurDeal} toggleDrawer={toggleDrawer} />
+        <EditDeal isEdit={isEdit} toggleDrawer={toggleDrawer} curDeal={curDeal} />
       </Grid>
     </Grid>
   );
