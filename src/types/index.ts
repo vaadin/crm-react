@@ -19,8 +19,8 @@ export interface Contact {
   lastName: string;
   email: string;
   status: string;
-  company: Company;
-  persisted?: boolean;
+  companyID: number;
+  companyName: string;
 }
 
 export interface User {
