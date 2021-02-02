@@ -137,16 +137,8 @@ const Contacts: FC = () => {
       lastName: '',
       email: '',
       status: '',
-      company: {
-        id: 0,
-        name: '',
-        address: '',
-        country: '',
-        zipcode: '',
-        state: '',
-        dealCount: 0,
-        dealTotal: 0
-      }
+      companyID: 0,
+      companyName: ''
     };
     setCurrent(emptyContact);
   };
@@ -228,7 +220,7 @@ const Contacts: FC = () => {
                     <TableCell align="left">{contact.email}</TableCell>
                     <TableCell align="left">{contact.status}</TableCell>
                     <TableCell style={{ whiteSpace: 'nowrap' }} align="left">
-                      {contact.company.name}
+                      {contact.companyName}
                     </TableCell>
                   </TableRow>
                 )
