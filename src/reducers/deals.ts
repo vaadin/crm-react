@@ -28,7 +28,7 @@ const slice = createSlice({
         const updatedItem = action.payload;
         state.data[
           state.data.findIndex((item) => item.id === updatedItem.id)
-        ] = updatedItem;
+        ].status = updatedItem.status;
         state.error = false;
       }
     }
