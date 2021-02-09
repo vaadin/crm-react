@@ -94,7 +94,7 @@ const EditContact: FC<EditContactProps> = ({
 
   useEffect(() => {
     console.log(contact);
-    setContactData({ ...contact, company: contact?.companyID });
+    setContactData({ ...contact, company: contact?.company.id });
     setError('');
   }, [contact]);
 
