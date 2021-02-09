@@ -7,12 +7,7 @@ import { State } from '../../reducers';
 import { updateDeal } from '../../reducers/deals';
 import { Deal } from '../../types';
 
-const DealStatus = [
-  { active: true, name: 'New' },
-  { active: true, name: 'ProposalSent' },
-  { active: false, name: 'ClosedWon' },
-  { active: false, name: 'ClosedLost' }
-];
+const DealStatus = ['New', 'ProposalSent', 'ClosedWon', 'ClosedLost'];
 
 interface DragDropProps {
   isActive: boolean;
@@ -65,7 +60,7 @@ const DragDrop: FC<DragDropProps> = ({
     columnFinish.splice(destination.index, 0, movingItem);
 
     dispatch(
-      updateDeal(movingItem.id, {
+      updateDeal(movingItem.id, isActive, {
         ...movingItem,
         status: destination.droppableId
       })
@@ -74,15 +69,12 @@ const DragDrop: FC<DragDropProps> = ({
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      {DealStatus.filter(
-        (status) =>
-          isActive === false || (isActive === true && status.active === true)
-      ).map((status) => {
+      {DealStatus.map((status) => {
         return (
           <DealColumn
-            key={status.name}
-            title={status.name}
-            items={getItems(status.name)}
+            key={status}
+            title={status}
+            items={getItems(status)}
             onClickItem={setCurDeal}
             toggleDrawer={toggleDrawer}
           />

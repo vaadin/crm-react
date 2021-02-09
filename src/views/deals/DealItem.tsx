@@ -63,12 +63,14 @@ const DealItem: FC<DealItemProps> = (props: DealItemProps) => {
           className={classes.dealItem}
           onClick={handleClickItem}
         >
-          <Typography className={classes.textWrap}>{item.name}</Typography>
+          <Typography className={classes.textWrap}>
+            {item.name || 'Unknown'}
+          </Typography>
           <Typography className={classes.textWrap}>
             {item.company?.name || 'Unknown'}
           </Typography>
           <Typography className={classes.textWrap}>
-            {item.user?.name}
+            {item.user?.name || 'Unknown'}
           </Typography>
         </ListItem>
       )}

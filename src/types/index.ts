@@ -26,22 +26,17 @@ export interface Contact {
 export interface User {
   id: number;
   name: string;
-  persisted?: boolean;
 }
 
-export interface Role {
+export interface DealContacts {
   id: number;
-  contactId: number;
-  contactName: string;
-  contactRole: string;
-  persisted?: boolean;
+  role: string;
 }
 
 export interface Note {
   id: number;
   text: string;
   createdAt: string; // type can be Date?
-  persisted?: boolean;
 }
 
 export interface Deal {
@@ -50,10 +45,9 @@ export interface Deal {
   price: number;
   status: string;
   user: User;
-  notes: Note[];
-  roles: Role[];
+  notes?: Note[];
+  dealContacts?: DealContacts[];
   company: Company;
-  persisted?: boolean;
 }
 
 export interface FilterData {

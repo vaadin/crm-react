@@ -22,13 +22,16 @@ const slice = createSlice({
       state.error = false;
     },
     updateDeal(state: DealsState, action: PayloadAction<any>) {
-      if (action.payload === 'failure') {
+      const { data, isActive } = action.payload;
+      if (data === 'failure') {
         state.error = true;
       } else {
-        const updatedItem = action.payload;
-        state.data[
-          state.data.findIndex((item) => item.id === updatedItem.id)
-        ] = updatedItem;
+        const idx = state.data.findIndex((item) => item.id === data.id);
+        if (isActive && ['ClosedWon', 'ClosedLost'].includes(data.status)) {
+          state.data.splice(idx, 1);
+        } else {
+          state.data[idx].status = data.status;
+        }
         state.error = false;
       }
     }
@@ -78,14 +81,16 @@ export const getDeals = (filterData: FilterData): AppThunk => async (
   dispatch(slice.actions.getDeals(response.data));
 };
 
-export const updateDeal = (id: number, data: Deal): AppThunk => async (
-  dispatch
-) => {
+export const updateDeal = (
+  id: number,
+  isActive: boolean,
+  data: Deal
+): AppThunk => async (dispatch) => {
   const response = await axios.put(
     `${process.env.REACT_APP_BASE_API}/deal/${id}`,
     data
   );
-  dispatch(slice.actions.updateDeal(response.data));
+  dispatch(slice.actions.updateDeal({ data: response.data, isActive }));
 };
 
 export default slice;
