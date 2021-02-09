@@ -25,8 +25,8 @@ const Deals: FC = () => {
     company: [],
     contact: [],
     user: [],
-    minDeal: undefined,
-    maxDeal: undefined,
+    minDeal: '',
+    maxDeal: '',
     state: false
   });
   const [isEdit, setEdit] = useState<boolean>(false);

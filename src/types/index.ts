@@ -19,8 +19,7 @@ export interface Contact {
   lastName: string;
   email: string;
   status: string;
-  companyID: number;
-  companyName: string;
+  company: any;
 }
 
 export interface User {
@@ -37,6 +36,7 @@ export interface Note {
   id: number;
   text: string;
   createdAt: string; // type can be Date?
+  author: User;
 }
 
 export interface Deal {
@@ -54,7 +54,7 @@ export interface FilterData {
   company: Company[];
   contact: Contact[];
   user: User[];
-  minDeal: number | undefined;
-  maxDeal: number | undefined;
+  minDeal: string;
+  maxDeal: string;
   state: boolean;
 }
