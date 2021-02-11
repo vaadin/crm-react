@@ -48,6 +48,13 @@ const Deals: FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
+    if (e.target.name === 'minDeal' || e.target.name === 'maxDeal') {
+      const regex = new RegExp('^[0-9]*$');
+      console.log(regex.test(e.target.value));
+      if (regex.test(e.target.value)) {
+        e.preventDefault();
+      }
+    }
     setFilterData((prev: any) => ({
       ...prev,
       [e.target.name]:
