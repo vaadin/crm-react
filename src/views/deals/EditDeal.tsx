@@ -244,7 +244,7 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
             </Select>
           </FormControl>
 
-          <FormControl className={classes.detail_row} required>
+          <FormControl className={classes.note} required>
             <ReactQuill
               className={classes.w100}
               value={dealData?.dealNote || ''}
