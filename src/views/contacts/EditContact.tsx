@@ -93,7 +93,6 @@ const EditContact: FC<EditContactProps> = ({
   const { countries } = useSelector((state: State) => state.companies);
 
   useEffect(() => {
-    console.log(contact);
     setContactData({ ...contact, company: contact?.company.id });
     setError('');
   }, [contact]);

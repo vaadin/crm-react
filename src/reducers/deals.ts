@@ -1,15 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from '../utils';
 import type { AppThunk } from '../store';
-import type { Deal, FilterData } from '../types';
+import type { Deal, DealContact, FilterData } from '../types';
 
 export interface DealsState {
   data: Deal[];
+  dContacts: DealContact[];
   error: boolean;
 }
 
 const initialState: DealsState = {
   data: [],
+  dContacts: [],
   error: false
 };
 
@@ -19,6 +21,10 @@ const slice = createSlice({
   reducers: {
     getDeals(state: DealsState, action: PayloadAction<[]>) {
       state.data = action.payload;
+      state.error = false;
+    },
+    getDealContacts(state: DealsState, action: PayloadAction<[]>) {
+      state.dContacts = action.payload;
       state.error = false;
     },
     updateDeal(state: DealsState, action: PayloadAction<any>) {
@@ -79,6 +85,19 @@ export const getDeals = (filterData: FilterData): AppThunk => async (
     `${process.env.REACT_APP_BASE_API}/deals${filterURL}`
   );
   dispatch(slice.actions.getDeals(response.data));
+};
+
+export const getDealContacts = (id: number | undefined): AppThunk => async (
+  dispatch
+) => {
+  if (!id) {
+    dispatch(slice.actions.getDealContacts([]));
+    return;
+  }
+  const response = await axios.get<[]>(
+    `${process.env.REACT_APP_BASE_API}/deal-contacts?deal=${id}`
+  );
+  dispatch(slice.actions.getDealContacts(response.data));
 };
 
 export const updateDeal = (

@@ -27,16 +27,16 @@ export interface User {
   name: string;
 }
 
-export interface DealContacts {
-  id: number;
+export interface DealContact {
+  contactId: number;
   role: string;
 }
 
 export interface Note {
   id: number;
   text: string;
-  createdAt: string; // type can be Date?
-  author: User;
+  createdAt: string;
+  user: User;
 }
 
 export interface Deal {
@@ -45,8 +45,6 @@ export interface Deal {
   price: number;
   status: string;
   user: User;
-  notes?: Note[];
-  dealContacts?: DealContacts[];
   company: Company;
 }
 
