@@ -10,13 +10,17 @@ import {
   IconButton,
   InputLabel,
   Select,
-  Paper
+  Typography
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LaunchIcon from '@material-ui/icons/Launch';
 import ReactQuill from 'react-quill';
-import { useSelector } from '../../store';
+import DealContactList from './DealContactList';
+import Note from './Note';
+import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
+import { getNotes } from '../../reducers/notes';
+import { getDealContacts } from '../../reducers/deals';
 import type { Deal } from '../../types';
 
 import 'react-quill/dist/quill.snow.css';
@@ -49,7 +53,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   note: {
     flexDirection: 'column',
+    width: '100%',
     paddingBottom: theme.spacing(2)
+  },
+  note_list: {
+    width: '100%',
+    height: 300,
+    overflow: 'auto'
   },
   no_button: {
     width: 'calc(100% - 48px)'
@@ -71,19 +81,21 @@ interface EditDealProps {
 
 const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   const [dealData, setDealData] = useState<any>(curDeal);
-  const { companies, users } = useSelector((state: State) => ({
+  const { companies, users, notes } = useSelector((state: State) => ({
     companies: state.companies,
-    users: state.users
+    users: state.users,
+    notes: state.notes
   }));
 
   useEffect(() => {
     setDealData(curDeal);
-    console.log(curDeal);
+    dispatch(getDealContacts(curDeal?.id));
+    dispatch(getNotes(curDeal?.id));
   }, [curDeal]);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
-    console.log(dealData);
     if (e.target.name === 'dealPrice') {
       const regex = new RegExp('^[0-9]*$');
 
@@ -193,9 +205,7 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
           </FormControl>
 
           <FormControl className={classes.detail_row}>
-            <Paper className={classes.temp}>
-              Here is the contacts table area
-            </Paper>
+            <DealContactList contacts={[]} />
             <IconButton aria-label="openCompany">
               <LaunchIcon />
             </IconButton>
@@ -253,6 +263,13 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
             <Button variant="contained" fullWidth>
               Add note
             </Button>
+          </FormControl>
+
+          <FormControl className={classes.note_list}>
+            <Typography variant="h6">Notes</Typography>
+            {notes.data?.map((note) => {
+              return <Note item={note} key={note.id} />;
+            })}
           </FormControl>
 
           <FormControl className={classes.control}>
