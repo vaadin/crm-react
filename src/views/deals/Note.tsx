@@ -4,8 +4,12 @@ import { Grid, makeStyles, Theme } from '@material-ui/core';
 import type { Note } from '../../types';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  p2: {
-    padding: theme.spacing(2)
+  note: {
+    padding: theme.spacing(2),
+    marginTop: theme.spacing(1),
+    background: 'lightyellow',
+    borderRadius: 20,
+    border: '1px solid lightgreen'
   }
 }));
 
@@ -17,7 +21,7 @@ const NoteItem: FC<NoteProps> = ({ item }) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.p2}>
+    <div className={classes.note}>
       <span>{item.text}</span>
       <Grid
         container

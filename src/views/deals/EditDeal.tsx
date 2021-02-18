@@ -17,6 +17,7 @@ import LaunchIcon from '@material-ui/icons/Launch';
 import ReactQuill from 'react-quill';
 import DealContactList from './DealContactList';
 import Note from './Note';
+import axios from '../../utils';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import { getNotes } from '../../reducers/notes';
@@ -27,7 +28,8 @@ import 'react-quill/dist/quill.snow.css';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
-    top: 130
+    top: 130,
+    height: 'calc(100% - 130px)'
   },
   pane: {
     width: 400,
@@ -45,6 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'none'
   },
   detail_row: {
+    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -57,8 +60,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(2)
   },
   note_list: {
+    marginBottom: theme.spacing(1),
     width: '100%',
-    height: 300,
+    maxHeight: 300,
     overflow: 'auto'
   },
   no_button: {
@@ -83,14 +87,25 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [dealData, setDealData] = useState<any>(curDeal);
+  const [contacts, setContacts] = useState<any>([]);
   const { companies, users, notes } = useSelector((state: State) => ({
     companies: state.companies,
     users: state.users,
     notes: state.notes
   }));
 
+  const getContacts = (id: any) => {
+    if (!id) return;
+    axios
+      .get<[]>(`${process.env.REACT_APP_BASE_API}/contacts?company=${id}`)
+      .then(({ data }) => {
+        setContacts(data);
+      });
+  };
+
   useEffect(() => {
     setDealData(curDeal);
+    getContacts(curDeal?.company?.id);
     dispatch(getDealContacts(curDeal?.id));
     dispatch(getNotes(curDeal?.id));
   }, [curDeal]);
@@ -102,6 +117,10 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
       if (regex.test(e.target.value)) {
         e.preventDefault();
       }
+    }
+
+    if (e.target.name === 'company') {
+      getContacts(e.target.value);
     }
 
     if (e.target.name === 'company' || e.target.name === 'user') {
@@ -204,12 +223,12 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
             </IconButton>
           </FormControl>
 
-          <FormControl className={classes.detail_row}>
-            <DealContactList contacts={[]} />
-            <IconButton aria-label="openCompany">
+          <div className={classes.detail_row}>
+            <DealContactList contacts={contacts} />
+            <IconButton aria-label="openContacts">
               <LaunchIcon />
             </IconButton>
-          </FormControl>
+          </div>
 
           <FormControl className={classes.detail_row}>
             <TextField
