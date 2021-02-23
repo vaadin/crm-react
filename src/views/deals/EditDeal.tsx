@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { FC, FormEvent } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Drawer,
   makeStyles,
@@ -86,6 +87,7 @@ interface EditDealProps {
 const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const [dealData, setDealData] = useState<any>(curDeal);
   const [contacts, setContacts] = useState<any>([]);
   const { companies, users, notes } = useSelector((state: State) => ({
@@ -109,6 +111,10 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
     dispatch(getDealContacts(curDeal?.id));
     dispatch(getNotes(curDeal?.id));
   }, [curDeal]);
+
+  const handleLaunchTable = (table: string) => {
+    history.push(table);
+  };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     if (e.target.name === 'dealPrice') {
@@ -218,14 +224,20 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
                 })}
               </Select>
             </div>
-            <IconButton aria-label="openCompany">
+            <IconButton
+              aria-label="openCompany"
+              onClick={() => handleLaunchTable('companies')}
+            >
               <LaunchIcon />
             </IconButton>
           </FormControl>
 
           <div className={classes.detail_row}>
             <DealContactList contacts={contacts} />
-            <IconButton aria-label="openContacts">
+            <IconButton
+              aria-label="openContacts"
+              onClick={() => handleLaunchTable('contacts')}
+            >
               <LaunchIcon />
             </IconButton>
           </div>
