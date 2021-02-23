@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FC } from 'react';
 import {
   Table,
@@ -64,25 +64,81 @@ const stableSort = (contacts: any, order: string, orderBy: string) => {
   return data;
 };
 
+const handleStopParentEvent = (e: React.ChangeEvent<any>) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
 const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
   const classes = useStyles();
+  const { dContacts } = useSelector((state: State) => state.deals);
   const [orderBy, setOrderBy] = useState<string>('firstName');
   const [order, setOrder] = useState<Order>('asc');
-  const { dContacts } = useSelector((state: State) => state.deals);
+  const [localData, setLocalData] = useState<any>([]);
+  const numSelected = localData.filter((data: any) => data.isSelected === true)
+    .length;
+  const rowCount = contacts.length;
 
-  const handleTableRowClick = (contact: Contact) => () => {
-    console.log(contact);
+  useEffect(() => {
+    const newData = contacts.map((contact) => {
+      const found = dContacts.find((dc) => dc.contactId === contact.id);
+      if (found) {
+        return {
+          id: contact.id,
+          firstName: contact.firstName,
+          lastName: contact.lastName,
+          role: found.role,
+          isSelected: true
+        };
+      }
+      return {
+        id: contact.id,
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        role: 'DecisionMaker',
+        isSelected: false
+      };
+    });
+    setLocalData(newData);
+  }, [contacts, dContacts]);
+
+  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newData = localData.map((data: any) => ({
+      ...data,
+      isSelected: event.target.checked === true
+    }));
+    setLocalData(newData);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event);
+  const handleTableRowClick = (id: number) => () => {
+    const newData: any = [];
+    localData.forEach((data: any) => {
+      if (data.id === id) {
+        newData.push({ ...data, isSelected: !data.isSelected });
+      } else {
+        newData.push(data);
+      }
+    });
+
+    setLocalData(newData);
   };
 
-  const isExists = (id: number) => {
-    if (dContacts.length > 0) {
-      return dContacts.map((dc) => dc.contactId).includes(id);
-    }
-    return undefined;
+  const handleChangeRole = (
+    event: React.ChangeEvent<{ value: unknown }>,
+    id: number
+  ) => {
+    // const index = selectedIndex(id);
+    // const newData = localData;
+    // newData[index].role = event.target.value;
+    const newData: any = [];
+    localData.forEach((data: any) => {
+      if (data.id === id) {
+        newData.push({ ...data, role: event.target.value });
+      } else {
+        newData.push(data);
+      }
+    });
+    setLocalData(newData);
   };
 
   const createSortHandler = (property: string) => () => {
@@ -96,6 +152,14 @@ const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
       <Table size="small" stickyHeader>
         <TableHead>
           <TableRow>
+            <TableCell>
+              <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={handleSelectAllClick}
+                inputProps={{ 'aria-label': 'select all' }}
+              />
+            </TableCell>
             {headCells.map((headCell) => (
               <TableCell
                 key={headCell.id}
@@ -122,23 +186,43 @@ const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stableSort(contacts, order, orderBy).map((contact: Contact) => (
-            <TableRow
-              key={contact.id}
-              hover
-              onClick={handleTableRowClick(contact)}
-            >
-              <TableCell align="left">{contact.firstName}</TableCell>
-              <TableCell align="left">{contact.lastName}</TableCell>
-              <TableCell align="left">
-                <Select value="" native fullWidth>
-                  <option value="DecisionMaker">DecisionMaker</option>
-                  <option value="Consulted">Consulted</option>
-                  <option value="Informed">Informed</option>
-                </Select>
-              </TableCell>
-            </TableRow>
-          ))}
+          {stableSort(localData, order, orderBy).map((contact: any) => {
+            const isItemSelected = contact.isSelected;
+            const labelId = `enhanced-table-checkbox-${contact.id}`;
+
+            return (
+              <TableRow
+                key={contact.id}
+                hover
+                onClick={handleTableRowClick(contact.id)}
+                role="checkbox"
+                tabIndex={-1}
+                aria-checked={isItemSelected}
+                selected={isItemSelected}
+              >
+                <TableCell>
+                  <Checkbox
+                    checked={isItemSelected}
+                    inputProps={{ 'aria-labelledby': labelId }}
+                  />
+                </TableCell>
+                <TableCell align="left">{contact.firstName}</TableCell>
+                <TableCell align="left">{contact.lastName}</TableCell>
+                <TableCell align="left" onClick={handleStopParentEvent}>
+                  <Select
+                    value={contact.role}
+                    native
+                    fullWidth
+                    onChange={(e) => handleChangeRole(e, contact.id)}
+                  >
+                    <option value="DecisionMaker">DecisionMaker</option>
+                    <option value="Consulted">Consulted</option>
+                    <option value="Informed">Informed</option>
+                  </Select>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>
