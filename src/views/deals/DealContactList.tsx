@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'absolute',
     top: 20,
     width: 1
+  },
+  hidden: {
+    display: 'none'
   }
 }));
 
@@ -95,7 +98,7 @@ const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
         id: contact.id,
         firstName: contact.firstName,
         lastName: contact.lastName,
-        role: 'DecisionMaker',
+        role: '',
         isSelected: false
       };
     });
@@ -127,9 +130,6 @@ const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
     event: React.ChangeEvent<{ value: unknown }>,
     id: number
   ) => {
-    // const index = selectedIndex(id);
-    // const newData = localData;
-    // newData[index].role = event.target.value;
     const newData: any = [];
     localData.forEach((data: any) => {
       if (data.id === id) {
@@ -213,8 +213,10 @@ const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
                     value={contact.role}
                     native
                     fullWidth
+                    disabled={!isItemSelected}
                     onChange={(e) => handleChangeRole(e, contact.id)}
                   >
+                    <option value="" className={classes.hidden} />
                     <option value="DecisionMaker">DecisionMaker</option>
                     <option value="Consulted">Consulted</option>
                     <option value="Informed">Informed</option>

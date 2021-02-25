@@ -30,11 +30,13 @@ import 'react-quill/dist/quill.snow.css';
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     top: 130,
-    height: 'calc(100% - 130px)'
+    height: 'calc(100% - 130px)',
+    overflowY: 'scroll'
   },
   pane: {
-    width: 400,
-    padding: theme.spacing(2)
+    width: 600,
+    padding: theme.spacing(2),
+    boxSizing: 'border-box'
   },
   w100: {
     width: '100%'
@@ -68,13 +70,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   no_button: {
     width: 'calc(100% - 48px)'
-  },
-  temp: {
-    width: 'calc(100% - 48px)',
-    height: '50px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 }));
 
@@ -214,7 +209,10 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
               size="small"
               required
             />
-            <IconButton aria-label="delete" onClick={handleDeleteDeal}>
+            <IconButton
+              aria-label="delete"
+              onClick={handleDeleteDeal}
+            >
               <DeleteIcon />
             </IconButton>
           </FormControl>
