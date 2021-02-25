@@ -22,7 +22,7 @@ const NoteItem: FC<NoteProps> = ({ item }) => {
 
   return (
     <div className={classes.note}>
-      <span>{item.text}</span>
+      <div dangerouslySetInnerHTML={{__html: item.text}} />
       <Grid
         container
         direction="row"
