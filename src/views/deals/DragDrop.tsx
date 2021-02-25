@@ -2,6 +2,7 @@ import React from 'react';
 import type { FC } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DealColumn from './DealColumn';
+import axios from '../../utils';
 import { useDispatch, useSelector } from '../../store';
 import { State } from '../../reducers';
 import { updateDeal } from '../../reducers/deals';
@@ -65,6 +66,18 @@ const DragDrop: FC<DragDropProps> = ({
         status: destination.droppableId
       })
     );
+
+    const note = {
+      deal: movingItem.id,
+      text: `state changed from <b>${source.droppableId}</b> to <b>${destination.droppableId}</b>`,
+      user: localStorage.getItem('accessToken')
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_API}/note`, note)
+      .then(() => {})
+      .catch((e: any) => {
+        console.log(e);
+      });
   };
 
   return (

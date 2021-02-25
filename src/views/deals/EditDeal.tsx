@@ -90,6 +90,7 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
   const history = useHistory();
   const [dealData, setDealData] = useState<any>(curDeal);
   const [contacts, setContacts] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const { companies, users, notes } = useSelector((state: State) => ({
     companies: state.companies,
     users: state.users,
@@ -153,6 +154,29 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
 
   const handleDeleteDeal = () => {
     console.log('delete clicked');
+  };
+
+  const handleAddNote = async () => {
+    if (dealData?.dealNote == null) {
+      return;
+    }
+
+    const note = {
+      deal: curDeal?.id,
+      text: dealData?.dealNote,
+      user: localStorage.getItem('accessToken')
+    };
+    setLoading(true);
+    await axios
+      .post(`${process.env.REACT_APP_BASE_API}/note`, note)
+      .then(() => {
+        setLoading(false);
+        dispatch(getNotes(curDeal?.id));
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   };
 
   const handleCancel = () => {
@@ -291,7 +315,12 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
               value={dealData?.dealNote || ''}
               onChange={handleChangeNote}
             />
-            <Button variant="contained" fullWidth>
+            <Button
+              variant="contained"
+              fullWidth
+              onClick={handleAddNote}
+              disabled={loading}
+            >
               Add note
             </Button>
           </FormControl>
