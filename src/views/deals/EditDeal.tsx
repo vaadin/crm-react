@@ -13,6 +13,7 @@ import {
   Select,
   Typography
 } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LaunchIcon from '@material-ui/icons/Launch';
 import ReactQuill from 'react-quill';
@@ -77,15 +78,23 @@ interface EditDealProps {
   curDeal?: Deal;
   isEdit: boolean;
   toggleDrawer: (open: boolean) => void;
+  onUpdate: () => void;
 }
 
-const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
+const EditDeal: FC<EditDealProps> = ({
+  curDeal,
+  isEdit,
+  toggleDrawer,
+  onUpdate
+}) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const [dealData, setDealData] = useState<any>(curDeal);
   const [contacts, setContacts] = useState<any>([]);
+  const [dcData, setDcData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
   const { companies, users, notes } = useSelector((state: State) => ({
     companies: state.companies,
     users: state.users,
@@ -147,10 +156,6 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
     }));
   };
 
-  const handleDeleteDeal = () => {
-    console.log('delete clicked');
-  };
-
   const handleAddNote = async () => {
     if (dealData?.dealNote == null) {
       return;
@@ -182,6 +187,54 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
+    const data = {
+      ...dealData,
+      dc: dcData.filter((item: any) => item.isSelected === true)
+    };
+    setLoading(true);
+    if (dealData.id > 0) {
+      await axios
+        .put(`${process.env.REACT_APP_BASE_API}/deal/${dealData.id}`, data)
+        .then(() => {
+          setLoading(false);
+          handleCancel();
+          setHasError(false);
+          onUpdate();
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+          setHasError(true);
+        });
+    } else {
+      await axios
+        .post(`${process.env.REACT_APP_BASE_API}/deal`, data)
+        .then(() => {
+          setLoading(false);
+          setHasError(false);
+          onUpdate();
+        })
+        .catch((err) => {
+          setLoading(false);
+          setHasError(true);
+          console.log(err);
+        });
+    }
+  };
+
+  const handleDeleteDeal = async () => {
+    setLoading(true);
+    await axios
+      .delete(`${process.env.REACT_APP_BASE_API}/deal/${dealData.id}`)
+      .then(() => {
+        setLoading(false);
+        handleCancel();
+        onUpdate();
+      })
+      .catch((e) => {
+        setLoading(false);
+        console.log(e);
+      });
   };
 
   return (
@@ -193,6 +246,12 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
     >
       <div className={classes.pane}>
         <form onSubmit={handleSubmit}>
+          {hasError && (
+            <Alert severity="error" className="form-alert">
+              <AlertTitle>Something went wrong!</AlertTitle>
+              <p>Check that you have entered all the information correctly.</p>
+            </Alert>
+          )}
           <FormControl
             variant="outlined"
             size="small"
@@ -209,10 +268,7 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
               size="small"
               required
             />
-            <IconButton
-              aria-label="delete"
-              onClick={handleDeleteDeal}
-            >
+            <IconButton aria-label="delete" onClick={handleDeleteDeal}>
               <DeleteIcon />
             </IconButton>
           </FormControl>
@@ -255,7 +311,7 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
           </FormControl>
 
           <div className={classes.detail_row}>
-            <DealContactList contacts={contacts} />
+            <DealContactList contacts={contacts} localData={dcData} setLocalData={setDcData} />
             <IconButton
               aria-label="openContacts"
               onClick={() => handleLaunchTable('contacts')}
@@ -331,10 +387,19 @@ const EditDeal: FC<EditDealProps> = ({ curDeal, isEdit, toggleDrawer }) => {
           </FormControl>
 
           <FormControl className={classes.control}>
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={loading}
+            >
               Save
             </Button>
-            <Button variant="contained" onClick={handleCancel}>
+            <Button
+              variant="contained"
+              onClick={handleCancel}
+              disabled={loading}
+            >
               Cancel
             </Button>
           </FormControl>

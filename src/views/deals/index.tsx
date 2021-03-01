@@ -62,6 +62,10 @@ const Deals: FC = () => {
     }));
   };
 
+  const handleUpdate = () => {
+    dispatch(getDeals(filterData));
+  };
+
   return (
     <Grid container className={classes.padding1}>
       <Grid
@@ -79,7 +83,7 @@ const Deals: FC = () => {
       </Grid>
       <Grid container item justify="space-around" spacing={2}>
         <DragDrop isActive={filterData.state} setCurDeal={setCurDeal} toggleDrawer={toggleDrawer} />
-        <EditDeal isEdit={isEdit} toggleDrawer={toggleDrawer} curDeal={curDeal} />
+        <EditDeal isEdit={isEdit} curDeal={curDeal} toggleDrawer={toggleDrawer} onUpdate={handleUpdate} />
       </Grid>
     </Grid>
   );
