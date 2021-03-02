@@ -102,7 +102,9 @@ const EditDeal: FC<EditDealProps> = ({
   }));
 
   const getContacts = (id: any) => {
-    if (!id) return;
+    if (!id) {
+      setContacts([]);
+    }
     axios
       .get<[]>(`${process.env.REACT_APP_BASE_API}/contacts?company=${id}`)
       .then(({ data }) => {
@@ -162,9 +164,8 @@ const EditDeal: FC<EditDealProps> = ({
     }
 
     const note = {
-      deal: curDeal?.id,
-      text: dealData?.dealNote,
-      user: localStorage.getItem('accessToken')
+      deal: {id: curDeal?.id },
+      text: dealData?.dealNote
     };
     setLoading(true);
     await axios
@@ -172,6 +173,10 @@ const EditDeal: FC<EditDealProps> = ({
       .then(() => {
         setLoading(false);
         dispatch(getNotes(curDeal?.id));
+        setDealData((prev: any) => ({
+          ...prev,
+          dealNote: null
+        }));
       })
       .catch((e) => {
         setLoading(false);
@@ -189,7 +194,7 @@ const EditDeal: FC<EditDealProps> = ({
     event.preventDefault();
     const data = {
       ...dealData,
-      dc: dcData.filter((item: any) => item.isSelected === true)
+      dealContacts: dcData.filter((item: any) => item.isSelected === true)
     };
     setLoading(true);
     if (dealData.id > 0) {
@@ -211,6 +216,7 @@ const EditDeal: FC<EditDealProps> = ({
         .post(`${process.env.REACT_APP_BASE_API}/deal`, data)
         .then(() => {
           setLoading(false);
+          handleCancel();
           setHasError(false);
           onUpdate();
         })
@@ -268,7 +274,11 @@ const EditDeal: FC<EditDealProps> = ({
               size="small"
               required
             />
-            <IconButton aria-label="delete" onClick={handleDeleteDeal}>
+            <IconButton
+              aria-label="delete"
+              onClick={handleDeleteDeal}
+              disabled={!dealData}
+            >
               <DeleteIcon />
             </IconButton>
           </FormControl>
@@ -311,7 +321,11 @@ const EditDeal: FC<EditDealProps> = ({
           </FormControl>
 
           <div className={classes.detail_row}>
-            <DealContactList contacts={contacts} localData={dcData} setLocalData={setDcData} />
+            <DealContactList
+              contacts={contacts}
+              localData={dcData}
+              setLocalData={setDcData}
+            />
             <IconButton
               aria-label="openContacts"
               onClick={() => handleLaunchTable('contacts')}
