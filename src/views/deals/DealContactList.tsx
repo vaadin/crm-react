@@ -19,6 +19,8 @@ import type { Contact } from '../../types';
 
 interface DealContactsProps {
   contacts: Contact[];
+  localData: [];
+  setLocalData: (data: any[]) => void;
 }
 
 const headCells = [
@@ -72,12 +74,11 @@ const handleStopParentEvent = (e: React.ChangeEvent<any>) => {
   e.stopPropagation();
 };
 
-const DealContactList: FC<DealContactsProps> = ({ contacts }) => {
+const DealContactList: FC<DealContactsProps> = ({ contacts, localData, setLocalData }) => {
   const classes = useStyles();
   const { dContacts } = useSelector((state: State) => state.deals);
   const [orderBy, setOrderBy] = useState<string>('firstName');
   const [order, setOrder] = useState<Order>('asc');
-  const [localData, setLocalData] = useState<any>([]);
   const numSelected = localData.filter((data: any) => data.isSelected === true)
     .length;
   const rowCount = contacts.length;
