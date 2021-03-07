@@ -37,11 +37,6 @@ const DragDrop: FC<DragDropProps> = ({
       return;
     }
 
-    // Find column from which the item was dragged from
-    const columnStart = getItems(source.droppableId);
-    // Find column in which the item was dropped
-    const columnFinish = getItems(destination.droppableId);
-
     // Do nothing if the item is dropped into the same place
     if (
       destination.droppableId === source.droppableId &&
@@ -56,9 +51,9 @@ const DragDrop: FC<DragDropProps> = ({
       return;
     }
 
-    // Moving items to the other column
-    const [movingItem] = columnStart.splice(source.index, 1);
-    columnFinish.splice(destination.index, 0, movingItem);
+    //  Moving items to the other column
+    const columnStart = getItems(source.droppableId);
+    const movingItem = columnStart[source.index];
 
     dispatch(
       updateDeal(movingItem.id, isActive, {
@@ -68,9 +63,8 @@ const DragDrop: FC<DragDropProps> = ({
     );
 
     const note = {
-      deal: movingItem.id,
-      text: `state changed from <b>${source.droppableId}</b> to <b>${destination.droppableId}</b>`,
-      user: localStorage.getItem('accessToken')
+      deal: { id: movingItem.id },
+      text: `state changed from <b>${source.droppableId}</b> to <b>${destination.droppableId}</b>`
     };
     axios
       .post(`${process.env.REACT_APP_BASE_API}/note`, note)
