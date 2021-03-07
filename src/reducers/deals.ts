@@ -105,6 +105,11 @@ export const updateDeal = (
   isActive: boolean,
   data: Deal
 ): AppThunk => async (dispatch) => {
+  // temporarily updates the state to get smooth dnd effects
+  dispatch(
+    slice.actions.updateDeal({ data: { id, status: data.status }, isActive })
+  );
+
   const response = await axios.put(
     `${process.env.REACT_APP_BASE_API}/deal/${id}`,
     data
